@@ -1,11 +1,13 @@
 ---
-title: SIS-L — Sistema de Interpretación y Aprendizaje de Lengua de Señas
-emoji: 🤖
-colorFrom: blue
-colorTo: purple
+title: Sis L App
+emoji: 🐢
+colorFrom: indigo
+colorTo: pink
 sdk: docker
 pinned: false
+license: mit
 ---
+
 
 # SIS-L · Sistema de Interpretación y Aprendizaje de Lengua de Señas
 

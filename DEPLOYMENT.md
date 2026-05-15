@@ -45,7 +45,8 @@ Copy-Item C:\xampp\htdocs\sis_l_fullstack\* . -Recurse
 4. Copia la `DATABASE_URL`
 5. Extrae credenciales:
    ```
-   DATABASE_URL = mysql://user:password@host:3306/dbname
+   mysql://root:AchKgtZeUMcRvacLXhbBtbWIearAngDn@yamanote.proxy.rlwy.net:57071/railway
+   DATABASE_URL = mysql://root:AchKgtZeUMcRvacLXhbBtbWIearAngDn@yamanote.proxy.rlwy.net:57071/railway
                            ↑    ↑         ↑    ↑
                           USER PASS      HOST PORT
    ```
@@ -69,9 +70,9 @@ En tu Space (Settings → Secrets):
 | Variable | Valor |
 |----------|-------|
 | `DB_HOST` | host.railway.app |
-| `DB_PORT` | 3306 |
-| `DB_USER` | admin |
-| `DB_PASSWORD` | xxxxxxxx (secreto) |
+| `DB_PORT` | 57071 |
+| `DB_USER` | root |
+| `DB_PASSWORD` | AchKgtZeUMcRvacLXhbBtbWIearAngDn (secreto) |
 | `DB_NAME` | sisl |
 | `JWT_SECRET` | genera-algo-aleatorio (secreto) |
 | `NODE_ENV` | production |
