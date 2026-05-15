@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lecciones · SIS-L</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/lecciones.css" />
+  
+  <!-- Verificar autenticación ANTES de cargar scripts de página -->
+  <script>
+    if (!localStorage.getItem('sis_l_token')) {
+      localStorage.setItem('sis_l_redirect', window.location.href);
+      window.location.href = '../acceso_requerido.html';
+    }
+  </script>
+</head>
+<body>
+
+  <nav id="nav-principal"></nav>
+
+  <div class="container">
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="../index.html">Inicio</a>
+        <span class="sep">/</span>
+        <span>Lecciones</span>
+      </div>
+      <h1 class="lesson-title">Módulo de Aprendizaje</h1>
+      <p class="page-sub">Selecciona un nivel para comenzar. Haz clic en cada seña para aprender más.</p>
+    </div>
+
+    <div class="layout-sidebar">
+      <!-- SIDEBAR -->
+      <aside class="sidebar">
+        <div class="sidebar-section-title">Nivel Básico</div>
+        <div class="sidebar-nav">
+          <button class="sidebar-item active" onclick="showLesson('alfabeto')">
+            <span class="icon">🔤</span> Alfabeto
+            <span class="check" id="chk-alfabeto"></span>
+          </button>
+          <button class="sidebar-item" onclick="showLesson('saludos')">
+            <span class="icon">👋</span> Saludos
+            <span class="check" id="chk-saludos"></span>
+          </button>
+          <button class="sidebar-item" onclick="showLesson('numeros')">
+            <span class="icon">🔢</span> Números
+            <span class="check" id="chk-numeros"></span>
+          </button>
+        </div>
+        <div class="sidebar-section-title">Nivel Intermedio</div>
+        <div class="sidebar-nav">
+          <button class="sidebar-item" onclick="showLesson('frases')">
+            <span class="icon">💬</span> Frases comunes
+            <span class="check" id="chk-frases"></span>
+          </button>
+          <button class="sidebar-item" onclick="showLesson('colores')">
+            <span class="icon">🎨</span> Colores
+            <span class="check" id="chk-colores"></span>
+          </button>
+          <button class="sidebar-item" onclick="showLesson('familia')">
+            <span class="icon">👨‍👩‍👧</span> Familia
+            <span class="check" id="chk-familia"></span>
+          </button>
+        </div>
+        <div class="sidebar-section-title">Avanzado</div>
+        <div class="sidebar-nav">
+          <button class="sidebar-item" onclick="showLesson('emociones')">
+            <span class="icon">😊</span> Emociones
+            <span class="check" id="chk-emociones"></span>
+          </button>
+          <button class="sidebar-item" onclick="showLesson('preguntas')">
+            <span class="icon">❓</span> Preguntas
+            <span class="check" id="chk-preguntas"></span>
+          </button>
+        </div>
+        <div class="sidebar-progress-wrap">
+          <div class="sidebar-progress-label">Progreso total</div>
+          <div class="progress"><div class="progress-bar" id="totalProgress" style="width:0%"></div></div>
+          <div class="sidebar-progress-text" id="progressText">0 / 8 lecciones</div>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT -->
+      <main>
+
+        <!-- ALFABETO -->
+        <div id="lesson-alfabeto" class="lesson-view">
+          <div class="lesson-header">
+            <div class="flex items-center gap-2 lesson-tag-row">
+              <span class="tag tag-green">Básico</span>
+              <span class="lesson-order">Lección 1 de 3</span>
+            </div>
+            <h2 class="lesson-title">Alfabeto Dactilológico LSC</h2>
+            <div class="lesson-meta">
+              <span>📖 27 letras</span>
+              <span>⏱ ~20 min</span>
+              <span>🖐 Aprende haciendo clic</span>
+            </div>
+          </div>
+          <p class="lesson-intro">
+            El alfabeto dactilológico te permite <strong>deletrear cualquier palabra</strong> usando tus manos.
+            Cada letra tiene una forma específica de los dedos. Haz clic en cada letra para ver los detalles.
+          </p>
+          <div class="alphabet-grid" id="alphabetGrid"></div>
+          <div class="lesson-actions">
+            <button class="btn btn-primary" onclick="markDone('alfabeto')">✅ Marcar como completada</button>
+            <a class="btn btn-secondary" href="practica.html?modo=alfabeto">🔁 Practicar alfabeto</a>
+            <button class="btn btn-secondary" onclick="showLesson('saludos')">Siguiente: Saludos →</button>
+          </div>
+        </div>
+
+        <!-- SALUDOS -->
+        <div id="lesson-saludos" class="lesson-view" style="display:none">
+          <div class="lesson-header">
+            <div class="flex items-center gap-2 lesson-tag-row">
+              <span class="tag tag-blue">Básico</span>
+              <span class="lesson-order">Lección 2 de 3</span>
+            </div>
+            <h2 class="lesson-title">Saludos y Presentaciones</h2>
+            <div class="lesson-meta">
+              <span>📖 12 señas</span>
+              <span>⏱ ~15 min</span>
+              <span>💡 Las más usadas en el día a día</span>
+            </div>
+          </div>
+          <p class="lesson-intro">
+            Estas son las señas fundamentales para <strong>saludar y presentarte</strong> en LSC.
+          </p>
+          <div class="signs-grid" id="saludosGrid"></div>
+          <div class="lesson-actions">
+            <button class="btn btn-primary" onclick="markDone('saludos')">✅ Marcar como completada</button>
+            <a class="btn btn-secondary" href="practica.html?modo=saludos">🔁 Practicar</a>
+            <button class="btn btn-secondary" onclick="showLesson('numeros')">Siguiente: Números →</button>
+          </div>
+        </div>
+
+        <!-- NÚMEROS -->
+        <div id="lesson-numeros" class="lesson-view" style="display:none">
+          <div class="lesson-header">
+            <div class="flex items-center gap-2 lesson-tag-row">
+              <span class="tag tag-green">Básico</span>
+              <span class="lesson-order">Lección 3 de 3</span>
+            </div>
+            <h2 class="lesson-title">Números del 0 al 10</h2>
+            <div class="lesson-meta"><span>📖 11 señas</span><span>⏱ ~10 min</span></div>
+          </div>
+          <div class="signs-grid" id="numerosGrid"></div>
+          <div class="lesson-actions">
+            <button class="btn btn-primary" onclick="markDone('numeros')">✅ Marcar como completada</button>
+            <button class="btn btn-secondary" onclick="showLesson('frases')">Siguiente: Frases →</button>
+          </div>
+        </div>
+
+        <!-- FRASES COMUNES -->
+        <div id="lesson-frases" class="lesson-view" style="display:none">
+          <div class="lesson-header">
+            <div class="flex items-center gap-2 lesson-tag-row">
+              <span class="tag tag-purple">Intermedio</span>
+              <span class="lesson-order">Lección 1 de 3</span>
+            </div>
+            <h2 class="lesson-title">Frases Comunes en LSC</h2>
+            <div class="lesson-meta">
+              <span>📖 10 frases</span><span>⏱ ~25 min</span><span>💡 Conversaciones básicas</span>
+            </div>
+          </div>
+          <p class="lesson-intro">
+            En LSC las frases tienen <strong>estructura diferente al español</strong>.
+            Se usa el orden: Sujeto → Objeto → Verbo.
+          </p>
+          <div class="signs-grid" id="frasesGrid"></div>
+          <div class="lesson-actions">
+            <button class="btn btn-primary" onclick="markDone('frases')">✅ Marcar como completada</button>
+            <a class="btn btn-secondary" href="quiz.html">🏆 Ir al Quiz</a>
+          </div>
+        </div>
+
+        <!-- COLORES -->
+        <div id="lesson-colores" class="lesson-view" style="display:none">
+          <div class="lesson-header">
+            <div class="flex items-center gap-2 lesson-tag-row"><span class="tag tag-purple">Intermedio</span></div>
+            <h2 class="lesson-title">Colores en LSC</h2>
+            <div class="lesson-meta"><span>📖 8 señas</span><span>⏱ ~12 min</span></div>
+          </div>
+          <div class="signs-grid" id="coloresGrid"></div>
+          <div class="lesson-actions">
+            <button class="btn btn-primary" onclick="markDone('colores')">✅ Completada</button>
+          </div>
+        </div>
+
+        <!-- FAMILIA -->
+        <div id="lesson-familia" class="lesson-view" style="display:none">
+          <div class="lesson-header">
+            <div class="flex items-center gap-2 lesson-tag-row"><span class="tag tag-purple">Intermedio</span></div>
+            <h2 class="lesson-title">Vocabulario de Familia</h2>
+            <div class="lesson-meta"><span>📖 8 señas</span><span>⏱ ~12 min</span></div>
+          </div>
+          <div class="signs-grid" id="familiaGrid"></div>
+          <div class="lesson-actions">
+            <button class="btn btn-primary" onclick="markDone('familia')">✅ Completada</button>
+          </div>
+        </div>
+
+        <!-- EMOCIONES -->
+        <div id="lesson-emociones" class="lesson-view" style="display:none">
+          <div class="lesson-header">
+            <div class="flex items-center gap-2 lesson-tag-row"><span class="tag tag-gold">Avanzado</span></div>
+            <h2 class="lesson-title">Emociones y Sentimientos</h2>
+            <div class="lesson-meta"><span>📖 8 señas</span><span>⏱ ~15 min</span></div>
+          </div>
+          <div class="signs-grid" id="emocionesGrid"></div>
+          <div class="lesson-actions">
+            <button class="btn btn-primary" onclick="markDone('emociones')">✅ Completada</button>
+          </div>
+        </div>
+
+        <!-- PREGUNTAS -->
+        <div id="lesson-preguntas" class="lesson-view" style="display:none">
+          <div class="lesson-header">
+            <div class="flex items-center gap-2 lesson-tag-row"><span class="tag tag-gold">Avanzado</span></div>
+            <h2 class="lesson-title">Palabras de Pregunta</h2>
+            <div class="lesson-meta"><span>📖 7 señas</span><span>⏱ ~12 min</span></div>
+          </div>
+          <div class="signs-grid" id="preguntasGrid"></div>
+          <div class="lesson-actions">
+            <button class="btn btn-primary" onclick="markDone('preguntas')">✅ Completada</button>
+          </div>
+        </div>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal" id="modal">
+      <span class="modal-sign"   id="modalSign">🤟</span>
+      <div  class="modal-letter" id="modalLetter">A</div>
+      <p    class="modal-word"   id="modalWord">Descripción de la seña</p>
+      <div  class="modal-tip"    id="modalTip"></div>
+      <div class="modal-actions">
+        <button class="btn btn-secondary btn-sm" onclick="closeModal()">Cerrar</button>
+        <button class="btn btn-primary   btn-sm" onclick="learnedThis()">✅ Aprendida</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../js/auth-nav.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/lecciones.js"></script>
+  <script>
+    protegerPagina();
+    inyectarNav('lecciones');
+  </script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz · SIS-L</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/quiz.css" />
+  
+  <!-- Verificar autenticación ANTES de cargar scripts de página -->
+  <script>
+    if (!localStorage.getItem('sis_l_token')) {
+      localStorage.setItem('sis_l_redirect', window.location.href);
+      window.location.href = '../acceso_requerido.html';
+    }
+  </script>
+</head>
+<body>
+  <nav id="nav-principal"></nav>
+  <div class="container">
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="../index.html">Inicio</a><span class="sep">/</span><span>Quiz</span>
+      </div>
+      <h1 class="page-title">Evaluaciones</h1>
+      <p class="page-sub">Pon a prueba tu conocimiento. Necesitas <strong class="accent-text">60% o más</strong> para aprobar.</p>
+    </div>
+
+    <!-- SELECCIÓN DE QUIZ -->
+    <div id="quizSelect" class="quiz-select">
+      <div class="quiz-cards" id="quizCards"></div>
+    </div>
+
+    <!-- QUIZ ACTIVO -->
+    <div id="quizActive">
+      <div class="quiz-topbar">
+        <div>
+          <div class="quiz-title-sm" id="activQuizTitle">Quiz</div>
+          <div class="quiz-counter"  id="qCounter">Pregunta 1 de 5</div>
+        </div>
+        <div class="progress-wrapper">
+          <div class="progress" style="height:8px">
+            <div class="progress-bar" id="qProgress" style="width:0%"></div>
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-sm" onclick="exitQuiz()">✕ Salir</button>
+      </div>
+
+      <div class="question-block" id="questionBlock">
+        <div class="q-number" id="qNum">PREGUNTA 1</div>
+        <span class="q-sign" id="qSign">🤟</span>
+        <div class="q-text"  id="qText">¿A qué letra corresponde esta seña?</div>
+        <div class="options-grid" id="optionsGrid"></div>
+      </div>
+
+      <div class="feedback-block" id="feedbackBlock">
+        <div class="feedback-title" id="feedbackTitle"></div>
+        <p   class="feedback-exp"   id="feedbackExp"></p>
+      </div>
+
+      <div class="quiz-next-row" id="nextBtnContainer">
+        <button class="btn btn-primary" id="nextBtn" style="display:none">
+          Siguiente →
+        </button>
+      </div>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div id="quizResults">
+      <span class="result-icon"  id="resultIcon">🏆</span>
+      <div  class="result-score" id="resultScore">100%</div>
+      <div  class="result-label" id="resultLabel">¡Excelente trabajo!</div>
+      <div class="result-breakdown">
+        <div class="rb-item green">
+          <span class="rb-num" id="rbCorrect">0</span>
+          <span class="rb-lbl">Correctas</span>
+        </div>
+        <div class="rb-item red">
+          <span class="rb-num" id="rbWrong">0</span>
+          <span class="rb-lbl">Incorrectas</span>
+        </div>
+        <div class="rb-item">
+          <span class="rb-num" id="rbTime">0s</span>
+          <span class="rb-lbl">Tiempo</span>
+        </div>
+      </div>
+      <div class="result-actions">
+        <button class="btn btn-primary"   onclick="retryQuiz()">🔁 Repetir quiz</button>
+        <button class="btn btn-secondary" onclick="exitQuiz()">← Volver</button>
+        <a      class="btn btn-secondary" href="progreso.html">📊 Ver progreso</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="../js/auth-nav.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/quiz.js"></script>
+  <script>
+    protegerPagina();
+    inyectarNav('quiz');
+  </script>
+</body>
+</html>

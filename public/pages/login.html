@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Acceder · LSC</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/login.css"/>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <span class="logo-icon">🤟</span>
+    <span class="logo-text"><span>LSC</span>-C</span>
+  </div>
+  <h2 id="cardTitle">Bienvenido</h2>
+  <p class="subtitle" id="cardSub">Ingresa con tu cuenta para continuar aprendiendo.</p>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('login')">Iniciar sesión</button>
+    <button class="tab"        onclick="switchTab('registro')">Registrarse</button>
+  </div>
+  <div class="error-msg"   id="errorMsg"></div>
+  <div class="success-msg" id="successMsg"></div>
+
+  <!-- LOGIN -->
+  <div class="form-section active" id="sec-login">
+    <div class="form-group">
+      <label>Correo electrónico</label>
+      <input type="email" id="loginCorreo" placeholder="tu@correo.com" autocomplete="email"/>
+    </div>
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/>
+      <div style="text-align: right; margin-top: 8px;">
+        <button type="button" class="btn-link" onclick="switchToRecuperacion()">¿Olvidaste tu contraseña?</button>
+      </div>
+    </div>
+    <button class="btn" id="btnLogin" onclick="doLogin()">Entrar →</button>
+  </div>
+
+  <!-- RECUPERACIÓN DE CONTRASEÑA -->
+  <div class="form-section" id="sec-recuperacion">
+    <p style="color: #666; text-align: center; margin-bottom: 20px;">
+      Te enviaremos un link a tu correo para cambiar tu contraseña.
+    </p>
+    <div class="form-group">
+      <label>Correo electrónico</label>
+      <input type="email" id="recupCorreo" placeholder="tu@correo.com" autocomplete="email"/>
+    </div>
+    <button class="btn" id="btnSolicitarRecuperacion" onclick="doSolicitarRecuperacion()">Enviar link de recuperación →</button>
+    <button type="button" class="btn-secondary" style="margin-top: 10px; width: 100%;" onclick="switchTab('login')">Volver al login</button>
+  </div>
+
+  <!-- REGISTRO -->
+  <div class="form-section" id="sec-registro">
+    <div class="row2">
+      <div class="form-group">
+        <label>Nombre</label>
+        <input type="text" id="regNombre" placeholder="Tu nombre"/>
+      </div>
+      <div class="form-group">
+        <label>Apellido</label>
+        <input type="text" id="regApellido" placeholder="Tu apellido"/>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Documento de identidad</label>
+      <input type="text" id="regDoc" placeholder="Cédula o ID"/>
+    </div>
+    <div class="form-group">
+      <label>Correo electrónico</label>
+      <input type="email" id="regCorreo" placeholder="tu@correo.com"/>
+    </div>
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input type="password" id="regPass" placeholder="Mínimo 6 caracteres"/>
+    </div>
+    <div class="form-group">
+      <label>Tipo de usuario</label>
+      <select id="regRol">
+        <option value="estudiante">Estudiante</option>
+        <option value="oyente">Oyente / Público general</option>
+        <option value="docente">Docente</option>
+      </select>
+    </div>
+    <button class="btn" id="btnReg" onclick="doRegistro()">Crear cuenta →</button>
+  </div>
+</div>
+
+<script src="../js/api.js"></script>
+<script src="../js/login.js"></script>
+</body>
+</html>

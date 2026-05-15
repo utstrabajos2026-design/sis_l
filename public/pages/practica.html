@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Práctica · SIS-L</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../css/global.css" />
+  <link rel="stylesheet" href="../css/practica.css" />
+  
+  <!-- Verificar autenticación ANTES de cargar scripts de página -->
+  <script>
+    if (!localStorage.getItem('sis_l_token')) {
+      localStorage.setItem('sis_l_redirect', window.location.href);
+      window.location.href = '../acceso_requerido.html';
+    }
+  </script>
+</head>
+<body>
+  <nav id="nav-principal"></nav>
+  <div class="container">
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="../index.html">Inicio</a><span class="sep">/</span><span>Práctica</span>
+      </div>
+      <h1 class="page-title">Modo Práctica</h1>
+      <p class="page-sub">Refuerza lo aprendido a tu ritmo sin presión de evaluación.</p>
+    </div>
+
+    <!-- STREAK -->
+    <div class="streak-bar" id="streakBar">
+      <span>🔥</span>
+      <span class="streak-num" id="streakNum">0</span>
+      <span class="streak-text">respuestas seguidas correctas</span>
+    </div>
+
+    <!-- MODE TABS -->
+    <div class="mode-tabs">
+      <button class="mode-tab active" onclick="setMode('flashcards')" id="tab-flashcards">🃏 Flashcards</button>
+      <button class="mode-tab"        onclick="setMode('micro')"      id="tab-micro">⚡ Micro-lecciones</button>
+    </div>
+
+    <!-- FLASHCARDS -->
+    <div id="mode-flashcards" class="flashcard-area">
+      <div class="filter-row" id="filterRow"></div>
+      <div class="fc-counter" id="fcCounter">Tarjeta 1 de 30</div>
+      <div class="flashcard-wrap" onclick="flipCard()">
+        <div class="flashcard" id="flashcard">
+          <div class="fc-face fc-front">
+            <span class="fc-sign" id="fcSign">🤟</span>
+            <div class="fc-label">¿Qué seña es esta?</div>
+            <div class="fc-hint" id="fcHint">Clic para revelar</div>
+          </div>
+          <div class="fc-face fc-back">
+            <span class="fc-word" id="fcWord">HOLA</span>
+            <p class="fc-desc" id="fcDesc">Descripción del movimiento</p>
+            <div class="fc-tip" id="fcTip"></div>
+          </div>
+        </div>
+      </div>
+      <div class="fc-controls">
+        <div class="fc-btn wrong"   onclick="rateCard(false)" title="No la sé todavía">❌</div>
+        <div class="fc-btn"         onclick="flipCard()"      title="Ver respuesta">👁</div>
+        <div class="fc-btn correct" onclick="rateCard(true)"  title="¡La sé!">✅</div>
+      </div>
+      <p class="fc-legend">✅ La sé · ❌ Repasar de nuevo</p>
+    </div>
+
+    <!-- MICRO-LECCIONES -->
+    <div id="mode-micro" class="micro-area">
+      <div class="micro-card">
+        <p class="micro-prompt" id="microPrompt">¿Cómo se escribe esta letra en señas?</p>
+        <span class="micro-sign" id="microSign">🤟</span>
+        <input
+          class="micro-input"
+          id="microInput"
+          maxlength="2"
+          placeholder="Escribe la letra o palabra"
+          autocomplete="off"
+          oninput="checkMicro()"
+        />
+        <div class="micro-feedback" id="microFeedback"></div>
+      </div>
+      <div class="micro-btns">
+        <button class="btn btn-secondary btn-sm" onclick="skipMicro()">Saltar →</button>
+        <button class="btn btn-secondary btn-sm" onclick="showHintMicro()">💡 Pista</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="../js/auth-nav.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/practica.js"></script>
+  <script>
+    protegerPagina();
+    inyectarNav('practica');
+  </script>
+</body>
+</html>

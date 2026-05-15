@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Verificar correo · SIS-L</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/login.css"/>
+</head>
+<body>
+<div class="card">
+  <div class="logo">
+    <span class="logo-icon">🤟</span>
+    <span class="logo-text"><span>LSC</span>-C</span>
+  </div>
+  <h2 id="cardTitle">Verificar correo</h2>
+  <p class="subtitle" id="cardSub">Ingresa el código que enviamos a tu correo electrónico.</p>
+  
+  <div class="error-msg"   id="errorMsg"></div>
+  <div class="success-msg" id="successMsg"></div>
+
+  <div class="form-section active" id="sec-verify">
+    <div class="form-group">
+      <label>Código de autenticación</label>
+      <input type="text" id="codigoVerificacion" placeholder="Ingresa el código de 6 dígitos" maxlength="6"/>
+    </div>
+    <button class="btn" id="btnVerificar" onclick="doVerificarCodigo()">Verificar correo →</button>
+    <button type="button" class="btn-secondary" style="margin-top: 10px; width: 100%;" onclick="irAlLogin()">Volver al login</button>
+  </div>
+
+  <!-- Estado: código inválido o expirado -->
+  <div class="form-section" id="sec-error">
+    <div style="text-align: center;">
+      <p style="color: #FF6363; margin-bottom: 20px;">
+        <strong>⚠️ Error en la verificación</strong>
+      </p>
+      <p style="color: #888; margin-bottom: 20px;" id="errorDetail">
+        El código es inválido o ha expirado. Solicita uno nuevo.
+      </p>
+      <button class="btn" onclick="irAlLogin()">Ir a login</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ── Mostrar / ocultar mensajes ────────────────────────
+  function showError(msg) {
+    const e = document.getElementById('errorMsg');
+    e.textContent = msg;
+    e.style.display = 'block';
+    document.getElementById('successMsg').style.display = 'none';
+  }
+
+  function showSuccess(msg) {
+    const s = document.getElementById('successMsg');
+    s.textContent = msg;
+    s.style.display = 'block';
+    document.getElementById('errorMsg').style.display = 'none';
+  }
+
+  function hideMessages() {
+    document.getElementById('errorMsg').style.display   = 'none';
+    document.getElementById('successMsg').style.display = 'none';
+  }
+
+  // ── Ir al login ────────────────────────────────────────
+  function irAlLogin() {
+    window.location.href = '/pages/login.html';
+  }
+
+  // ── Obtener correo de la URL ────────────────────────────
+  function getCorreoFromURL() {
+    const params = new URLSearchParams(window.location.search);
+    return params.get('correo');
+  }
+
+  // ── Verificar código ────────────────────────────────────
+  async function doVerificarCodigo() {
+    const correo = getCorreoFromURL();
+    if (!correo) {
+      return showError('Correo no encontrado. El acceso es inválido.');
+    }
+
+    const codigo = document.getElementById('codigoVerificacion').value.trim();
+
+    if (!codigo) {
+      return showError('Ingresa el código de verificación');
+    }
+
+    if (codigo.length !== 6 || isNaN(codigo)) {
+      return showError('El código debe ser de 6 dígitos');
+    }
+
+    const btn = document.getElementById('btnVerificar');
+    btn.disabled = true;
+    btn.textContent = 'Verificando…';
+
+    try {
+      const response = await fetch('/api/auth/verificar-codigo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ correo, codigo })
+      });
+
+      const data = await response.json();
+
+      btn.disabled = false;
+      btn.textContent = 'Verificar correo →';
+
+      if (!data || !data.ok) {
+        return showError(data?.error || 'Código inválido o expirado');
+      }
+
+      showSuccess('¡Correo verificado! Tu cuenta está lista. Redirigiendo al login…');
+      setTimeout(() => irAlLogin(), 2000);
+
+    } catch (e) {
+      btn.disabled = false;
+      btn.textContent = 'Verificar correo →';
+      console.error('Error:', e);
+      showError('Error de conexión: ' + e.message);
+    }
+  }
+
+  // ── Validar correo al cargar la página ────────────────────
+  window.addEventListener('DOMContentLoaded', () => {
+    const correo = getCorreoFromURL();
+    if (!correo) {
+      document.getElementById('sec-verify').style.display = 'none';
+      document.getElementById('sec-error').style.display = 'block';
+      document.getElementById('errorDetail').textContent = 'No se encontró el correo electrónico. El acceso es inválido.';
+    } else {
+      document.getElementById('cardSub').textContent = 'Ingresa el código que enviamos a ' + correo;
+    }
+  });
+</script>
+</body>
+</html>

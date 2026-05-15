@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n="title"></title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/global.css" />
+  <link rel="stylesheet" href="css/index.css" />
+</head>
+<body>
+  <nav id="nav-principal"></nav>
+  <section class="hero">
+    <div class="hero-left">
+      <div class="language-selector">
+        <button onclick="changeLanguage('es')">🇪🇸 ES</button>
+        <button onclick="changeLanguage('en')">🇺🇸 EN</button>
+      </div>
+      <div class="badge"><span></span><span data-i18n="badge"></span></div>
+      <h1 class="hero-title" data-i18n="[html]heroTitle"></h1>
+      <p class="hero-sub" data-i18n="heroSub"></p>
+      <div class="hero-actions">
+        <a class="btn-primary" href="pages/lecciones.html" data-i18n="startLessons"></a>
+        <a class="btn-ghost"   href="pages/practica.html" data-i18n="practiceMode"></a>
+      </div>
+      <div class="hero-stats">
+        <div><span class="stat-num">36</span><span class="stat-lbl" data-i18n="signsAlphabet"></span></div>
+        <div><span class="stat-num">3</span><span class="stat-lbl" data-i18n="levels"></span></div>
+        <div><span class="stat-num">12</span><span class="stat-lbl" data-i18n="quizzes"></span></div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="sign-showcase">
+        <div class="sign-ring"></div>
+        <div class="sign-ring"></div>
+        <div class="sign-main" id="heroSign">🤟</div>
+        <div class="sign-orbits">
+          <div class="orbit-dot">👋</div>
+          <div class="orbit-dot">✌️</div>
+          <div class="orbit-dot">🤙</div>
+          <div class="orbit-dot">👌</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="modules-section">
+    <p class="section-eyebrow" data-i18n="moduleContent"></p>
+    <h2 class="section-title" data-i18n="chooseStart"></h2>
+    <div class="modules-grid">
+      <a class="module-card" href="pages/lecciones.html?nivel=basico" style="--card-color:#63FFB4;--card-glow:rgba(99,255,180,.05)">
+        <span class="card-icon">🔤</span><span class="card-level" data-i18n="basic"></span>
+        <div class="card-title" data-i18n="dactylologicalAlphabet"></div>
+        <p class="card-desc" data-i18n="basicDesc"></p>
+        <div class="card-meta"><span>📖 9 lecciones</span><span>⏱ 20 min</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+      </a>
+      <a class="module-card" href="pages/lecciones.html?nivel=saludos" style="--card-color:#63C8FF;--card-glow:rgba(99,200,255,.05)">
+        <span class="card-icon">👋</span><span class="card-level" data-i18n="basic"></span>
+        <div class="card-title" data-i18n="greetings"></div>
+        <p class="card-desc" data-i18n="greetingsDesc"></p>
+        <div class="card-meta"><span>📖 6 lecciones</span><span>⏱ 15 min</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+      </a>
+      <a class="module-card" href="pages/lecciones.html?nivel=frases" style="--card-color:#C8A0FF;--card-glow:rgba(200,160,255,.05)">
+        <span class="card-icon">💬</span><span class="card-level" data-i18n="intermediate"></span>
+        <div class="card-title" data-i18n="commonPhrases"></div>
+        <p class="card-desc" data-i18n="phrasesDesc"></p>
+        <div class="card-meta"><span>📖 8 lecciones</span><span>⏱ 25 min</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+      </a>
+      <a class="module-card" href="pages/practica.html" style="--card-color:#FFD063;--card-glow:rgba(255,208,99,.05)">
+        <span class="card-icon">🖐</span><span class="card-level" data-i18n="freePractice"></span>
+        <div class="card-title" data-i18n="practiceTitle"></div>
+        <p class="card-desc" data-i18n="practiceDesc"></p>
+        <div class="card-meta"><span>🃏 Tarjetas</span><span>⚡ Micro-lecciones</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+      </a>
+      <a class="module-card" href="pages/quiz.html" style="--card-color:#FF8A63;--card-glow:rgba(255,138,99,.05)">
+        <span class="card-icon">🏆</span><span class="card-level" data-i18n="evaluation"></span>
+        <div class="card-title" data-i18n="quizzesTitle"></div>
+        <p class="card-desc" data-i18n="quizzesDesc"></p>
+        <div class="card-meta"><span>❓ 12 quizzes</span><span>⭐ Puntuación</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+      </a>
+      <a class="module-card" href="pages/progreso.html" style="--card-color:#63FFD0;--card-glow:rgba(99,255,208,.05)">
+        <span class="card-icon">📊</span><span class="card-level" data-i18n="profile"></span>
+        <div class="card-title" data-i18n="progressTitle"></div>
+        <p class="card-desc" data-i18n="progressDesc"></p>
+        <div class="card-meta"><span>🔥 Racha</span><span>🎖 Logros</span></div>
+        <div class="progress-bar"><div class="progress-fill" style="width:0%"></div></div>
+      </a>
+    </div>
+  </section>
+  <script type="module" src="js/i18n.js"></script>
+  <script src="js/auth-nav.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/index.js"></script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+===============================================================
+  TUTORIAL: SUBIR TU APP CON OLLAMA + MYSQL A HUGGING FACE SPACES
+  (Para personas que nunca lo han hecho antes)
+===============================================================
+
+Antes de empezar, ten claro esto:
+- Ya tienes tu Dockerfile funcionando localmente. ✅
+- Lo que haremos es subir ese proyecto a Hugging Face Spaces,
+  que es básicamente un servidor gratuito en la nube donde
+  tu app va a vivir y correr.
+
+⚠️ ADVERTENCIA IMPORTANTE ANTES DE COMENZAR ⚠️
+---------------------------------------------------------------
+Hugging Face Spaces tiene limitaciones en el plan gratuito:
+- RAM limitada (~16 GB máx en plan gratuito con upgrade).
+- Ollama con modelos grandes (llama3, mistral, etc.) consume
+  MUCHÍSIMA memoria. En el tier gratuito básico (2 vCPU, 16GB RAM)
+  puede funcionar con modelos pequeños como tinyllama o neural-chat.
+- MySQL persistente requiere estrategia especial (ver Sección 4).
+- Los Spaces gratuitos se "duermen" si no reciben tráfico.
+
+Si tu proyecto es para producción real, considera pagar el
+tier "Persistent Storage" ($5/mes) o usar otro proveedor.
+Para pruebas y demos, el gratuito puede servir.
+
+===============================================================
+SECCIÓN 0 — REQUISITOS PREVIOS
+===============================================================
+
+Necesitas tener instalado en tu computador:
+
+1. Git
+   - Verifica con: git --version
+   - Descarga en: https://git-scm.com
+
+2. Git LFS (Large File Storage) — MUY IMPORTANTE para archivos grandes
+   - Instálalo desde: https://git-lfs.com
+   - Luego ejecuta UNA VEZ en tu terminal: git lfs install
+   - Sin esto, los archivos grandes (modelos de IA) no subirán bien.
+
+3. Una cuenta en Hugging Face
+   - Regístrate gratis en: https://huggingface.co
+
+4. Tu proyecto con el Dockerfile ya listo y funcionando localmente.
+
+===============================================================
+SECCIÓN 1 — CREAR EL SPACE EN HUGGING FACE
+===============================================================
+
+Paso 1.1 — Inicia sesión en https://huggingface.co
+
+Paso 1.2 — Haz clic en tu foto de perfil (arriba a la derecha)
+           y selecciona "New Space".
+
+Paso 1.3 — Llena el formulario:
+   - Owner: tu usuario (ej. james123)
+   - Space name: ponle el nombre que quieras (ej. sis-l-app)
+   - License: puedes dejar MIT o la que prefieras.
+   - SDK: selecciona *** DOCKER *** ← esto es clave
+   - Visibility: 
+       · Public  = cualquiera puede verlo (gratis)
+       · Private = solo tú (gratis también, pero con límites)
+
+Paso 1.4 — Haz clic en "Create Space".
+
+Hugging Face creará un repositorio Git vacío para tu Space.
+Verás una pantalla que dice "Building..." o un README de ejemplo.
+Eso es normal, todavía no hemos subido nada.
+
+===============================================================
+SECCIÓN 2 — PREPARAR TU PROYECTO PARA SUBIR
+===============================================================
+
+Paso 2.1 — Abre una terminal en la carpeta raíz de tu proyecto
+           (donde está tu Dockerfile).
+
+Paso 2.2 — Inicializa Git en tu proyecto (si no lo tienes):
+
+   git init
+
+   Si ya tienes Git inicializado, salta este paso.
+
+Paso 2.3 — Configura Git LFS para archivos grandes.
+   Esto le dice a Git que los archivos .bin, .gguf, etc.
+   (modelos de IA) deben manejarse de forma especial:
+
+   git lfs track "*.bin"
+   git lfs track "*.gguf"
+   git lfs track "*.safetensors"
+   git add .gitattributes
+
+Paso 2.4 — Crea o revisa tu archivo .gitignore
+   Agrega estas líneas para NO subir cosas innecesarias:
+
+   node_modules/
+   .env
+   *.log
+   __pycache__/
+
+   ⚠️ MUY IMPORTANTE: No subas tu archivo .env con contraseñas.
+   Las variables de entorno se configuran diferente en HF (ver Sección 3).
+
+Paso 2.5 — Conecta tu repositorio local con el Space de HF.
+   Primero, obtén la URL de tu Space. Está en la página del Space,
+   pestaña "Files", botón "Clone repository". Se ve así:
+
+   https://huggingface.co/spaces/TU_USUARIO/TU_SPACE_NAME
+
+   Ahora en tu terminal:
+
+   git remote add space https://huggingface.co/spaces/TU_USUARIO/TU_SPACE_NAME
+
+   (Reemplaza TU_USUARIO y TU_SPACE_NAME con los tuyos reales)
+
+   Si ya tenías un remote llamado "origin", usa otro nombre como "space".
+
+===============================================================
+SECCIÓN 3 — CONFIGURAR VARIABLES DE ENTORNO EN HUGGING FACE
+===============================================================
+
+Tu app tiene contraseñas y configuraciones sensibles (como las de
+MySQL y Ollama). Nunca las subas en archivos al repo. En su lugar:
+
+Paso 3.1 — Ve a tu Space en huggingface.co
+
+Paso 3.2 — Haz clic en la pestaña "Settings" de tu Space.
+
+Paso 3.3 — Busca la sección "Repository secrets" o "Variables".
+
+Paso 3.4 — Agrega cada variable que tenías en tu .env, por ejemplo:
+
+   MYSQL_ROOT_PASSWORD   →  tu_contraseña_root
+   MYSQL_DATABASE        →  nombre_de_tu_bd
+   MYSQL_USER            →  tu_usuario
+   MYSQL_PASSWORD        →  tu_contraseña
+   OLLAMA_MODEL          →  neural-chat:latest
+   PORT                  →  7860
+
+   ⚠️ IMPORTANTE: Hugging Face Spaces REQUIERE que tu app escuche
+   en el puerto 7860. Asegúrate de que tu app use ese puerto,
+   o configúralo como variable de entorno.
+
+Paso 3.5 — En tu Dockerfile, usa esas variables así (ejemplo):
+   ENV PORT=${PORT}
+   O en tu app Node.js: process.env.PORT || 7860
+
+===============================================================
+SECCIÓN 4 — ESTRATEGIA PARA MYSQL (DATO CRÍTICO)
+===============================================================
+
+Aquí viene algo importante que mucha gente no sabe:
+
+Los Spaces de Hugging Face NO tienen almacenamiento persistente
+por defecto. Eso significa que si tu contenedor se reinicia
+(y lo hará, especialmente en el plan gratuito), ¡tu base de
+datos MySQL se borrará!
+
+Tienes 3 opciones:
+
+OPCIÓN A — Persistent Storage de HF (recomendada para datos reales)
+   - Ve a Settings > Persistent storage en tu Space.
+   - Activa el almacenamiento (cuesta ~$5/mes).
+   - En tu Dockerfile, apunta el volumen de MySQL a /data:
+     En tu docker-compose o CMD, agrega:
+     --datadir /data/mysql
+   - Así los datos sobreviven reinicios.
+
+OPCIÓN B — Base de datos externa gratuita (recomendada para empezar)
+   - Usa un servicio de MySQL externo gratuito como:
+     · PlanetScale (https://planetscale.com) — muy fácil
+     · Railway (https://railway.app) — $5 crédito gratis/mes
+     · Clever Cloud (https://clever-cloud.com) — tier gratuito
+   - Tu app en HF Spaces se conecta a esa BD externa via URL.
+   - Solo cambias las variables de entorno de conexión.
+   - Esta es la opción MÁS ESTABLE para demos y proyectos reales.
+
+OPCIÓN C — Base de datos "de solo lectura" (para demos simples)
+   - Si tu app solo necesita LEER datos (no escribir),
+     puedes incluir un archivo .sql en tu repo y cargarlo
+     al iniciar el contenedor cada vez.
+   - No sirve si usuarios necesitan guardar información.
+
+Para SIS-L (plataforma de aprendizaje), recomiendo OPCIÓN B.
+
+===============================================================
+SECCIÓN 5 — AJUSTAR EL DOCKERFILE PARA HUGGING FACE SPACES
+===============================================================
+
+HF Spaces tiene algunas reglas que debes seguir:
+
+Regla 1 — Puerto 7860
+   Tu app DEBE escuchar en el puerto 7860.
+   Agrega esto en tu Dockerfile:
+   EXPOSE 7860
+   Y asegúrate de que tu app Node.js use: PORT=7860
+
+Regla 2 — Usuario no-root (recomendado)
+   HF prefiere que los contenedores no corran como root.
+   Si tu Dockerfile ya tiene un usuario definido, bien.
+   Si no, considera agregar al final:
+   RUN useradd -m appuser
+   USER appuser
+
+Regla 3 — Ollama necesita descargar el modelo al iniciar
+   Como los modelos de Ollama son muy grandes (varios GB),
+   NO los incluyas en el repo (Git LFS tiene límites).
+   En su lugar, haz que el Dockerfile o el entrypoint
+   descargue el modelo al arrancar:
+
+   Ejemplo en tu entrypoint.sh:
+   #!/bin/bash
+   ollama serve &
+   sleep 5
+   ollama pull neural-chat:latest
+   node server.js
+
+   Así, cada vez que el contenedor arranque, descarga el modelo.
+   Tarda unos minutos la primera vez, pero funciona.
+
+Regla 4 — El README.md debe tener el header de HF Spaces
+   Cuando HF crea el Space, genera un README.md con esto arriba:
+   ---
+   title: Mi App
+   emoji: 🚀
+   colorFrom: blue
+   colorTo: green
+   sdk: docker
+   pinned: false
+   ---
+   No borres esa parte, es lo que le dice a HF cómo tratar tu Space.
+
+===============================================================
+SECCIÓN 6 — SUBIR EL CÓDIGO
+===============================================================
+
+Ahora sí, vamos a subir todo.
+
+Paso 6.1 — Agrega todos tus archivos al staging de Git:
+
+   git add .
+
+Paso 6.2 — Haz un commit (una "foto" de tus archivos):
+
+   git commit -m "Primer deploy a Hugging Face Spaces"
+
+Paso 6.3 — Sube el código al Space:
+
+   git push space main
+
+   Si te pide usuario y contraseña:
+   - Usuario: tu nombre de usuario de HF
+   - Contraseña: NO uses tu contraseña de la web.
+     Debes usar un TOKEN de acceso. Ve a:
+     https://huggingface.co/settings/tokens
+     → "New token" → tipo "Write" → copia el token
+     Ese token es tu "contraseña" para git push.
+
+Paso 6.4 — Ve a tu Space en huggingface.co
+   Verás que en la pestaña principal dice "Building..."
+   con logs en tiempo real. Puedes ver qué está pasando.
+
+   Si hay errores, los verás ahí con mensajes detallados.
+
+Paso 6.5 — Espera. La primera vez puede tardar 5-15 minutos
+   porque HF está:
+   - Construyendo tu imagen Docker
+   - Descargando dependencias
+   - (Si configuraste el entrypoint) descargando el modelo Ollama
+
+===============================================================
+SECCIÓN 7 — ERRORES COMUNES Y CÓMO SOLUCIONARLOS
+===============================================================
+
+ERROR: "Port not exposed"
+→ Solución: Asegúrate de que tu app escuche en el puerto 7860
+  y que tu Dockerfile tenga: EXPOSE 7860
+
+ERROR: "Build failed - no space left on device"
+→ Solución: Tu imagen Docker es demasiado grande.
+  Usa una imagen base más liviana (ej. node:18-slim en vez de node:18)
+  y elimina cachés en el Dockerfile con:
+  RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ERROR: "git push" pide contraseña y la rechaza
+→ Solución: Usa el token de HF, NO tu contraseña web.
+  Ve a https://huggingface.co/settings/tokens y crea uno tipo "Write".
+
+ERROR: El modelo de Ollama no carga / app no responde
+→ Solución: El modelo puede tardar en descargar.
+  Revisa los logs del Space. Si el problema persiste,
+  prueba con un modelo más pequeño como "tinyllama".
+
+ERROR: MySQL "connection refused"
+→ Solución: Si usas MySQL dentro del mismo contenedor,
+  asegúrate de que el entrypoint espere a que MySQL inicie:
+  Agrega en tu script: sleep 10 (después de iniciar MySQL)
+  Si usas BD externa, verifica las variables de entorno.
+
+ERROR: "Memory limit exceeded" / Space crashea
+→ Solución: El modelo es demasiado grande para el tier gratuito.
+  Opciones:
+  a) Usa un modelo más pequeño (tinyllama: ~600MB)
+  b) Mejora el hardware del Space (Settings > Hardware)
+     Hay opciones de pago con más RAM.
+
+===============================================================
+SECCIÓN 8 — ACTUALIZACIONES FUTURAS
+===============================================================
+
+Cuando hagas cambios en tu código y quieras actualizar el Space:
+
+1. Haz tus cambios en los archivos
+2. git add .
+3. git commit -m "Descripción de los cambios"
+4. git push space main
+
+HF automáticamente reconstruirá el contenedor con los nuevos cambios.
+
+===============================================================
+SECCIÓN 9 — RESUMEN DE PASOS (CHECKLIST RÁPIDO)
+===============================================================
+
+□ Cuenta en Hugging Face creada
+□ Git y Git LFS instalados
+□ Space nuevo creado con SDK: Docker
+□ Variables de entorno configuradas en Settings del Space
+□ Puerto 7860 configurado en la app y en Dockerfile
+□ Estrategia de MySQL definida (externa recomendada)
+□ Entrypoint.sh configurado para iniciar Ollama + descargar modelo
+□ .gitignore con node_modules/ y .env
+□ git remote add space <URL del Space>
+□ Token de HF creado (tipo Write)
+□ git push space main
+□ Revisar logs de Build en el Space
+□ ¡Probar la app en la URL del Space!
+
+Tu app estará disponible en:
+https://huggingface.co/spaces/TU_USUARIO/TU_SPACE_NAME
+
+===============================================================
+FIN DEL TUTORIAL
+Suerte con SIS-L 🤟
+===============================================================

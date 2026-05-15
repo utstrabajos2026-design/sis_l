@@ -1,0 +1,45 @@
+# Dependencias
+node_modules/
+package-lock.json
+yarn.lock
+
+# Variables de entorno (NUNCA subir contraseñas)
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# IDEs
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Caché de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Caché de Docker
+.docker/
+
+# Base de datos local
+*.sqlite
+*.sqlite3
+database.db
+
+# Archivos temporales
+tmp/
+temp/

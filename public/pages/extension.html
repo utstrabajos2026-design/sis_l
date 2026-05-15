@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Extensión · Modo Práctica · SIS-L</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="../css/global.css"/>
+  <link rel="stylesheet" href="../css/extension.css"/>
+  
+  <!-- Verificar autenticación ANTES de cargar scripts de página -->
+  <script>
+    if (!localStorage.getItem('sis_l_token')) {
+      localStorage.setItem('sis_l_redirect', window.location.href);
+      window.location.href = '../acceso_requerido.html';
+    }
+  </script>
+</head>
+<body>
+  <nav id="nav-principal"></nav>
+
+  <div class="container">
+
+    <!-- HERO -->
+    <div class="ext-hero">
+      <div class="ext-badge">⚡ Nuevo</div>
+      <h1>Extensión <span>Modo Práctica</span></h1>
+      <p>Lleva tu aprendizaje de LSC al siguiente nivel con ejercicios intensivos, retos cronometrados y desafíos diarios.</p>
+    </div>
+
+    <!-- SECCIÓN HANDSET -->
+    <div class="handset-section">
+      <div class="handset-hero-card">
+        <img class="handset-app-icon"
+             src="data:image/png;base64,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"
+             alt="Handset"/>
+        <div class="handset-hero-info">
+          <h2>Extensión <span>Handset</span></h2>
+          <p>Convierte los subtítulos de cualquier video de YouTube en señas del lenguaje de señas colombiano, en tiempo real. Disponible en modo 2D (imágenes letra a letra) y modo 3D (avatar animado).</p>
+          <div class="handset-badges">
+            <span class="hbadge hbadge-green">✅ Gratuita</span>
+            <span class="hbadge hbadge-blue">🌐 Chrome / Edge</span>
+            <span class="hbadge hbadge-purple">▶️ Solo YouTube</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- INSTALACIÓN -->
+      <div class="hs-title">📦 Cómo instalar</div>
+      <div class="req-box">
+        <span>💻</span>
+        <div>
+          <strong>Requisito:</strong> necesitas Google Chrome o Microsoft Edge en computador.
+          Esta extensión <strong>no está en la Chrome Web Store</strong>, se instala manualmente en modo desarrollador — es sencillo y seguro.
+        </div>
+      </div>
+
+      <div class="install-steps">
+        <div class="install-step">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <strong>Descarga el archivo de la extensión</strong>
+            <p>Haz clic en el botón de abajo para obtener el archivo <span class="step-code">handset-extension.zip</span>.</p>
+            <a class="dl-btn" href="../assets/handset-extension.zip" download>⬇️ Descargar Handset</a>
+          </div>
+        </div>
+        <div class="install-step">
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <strong>Descomprime el archivo ZIP</strong>
+            <p>Clic derecho → <em>"Extraer todo"</em> (Windows) o doble clic (Mac). Guarda la carpeta en un lugar que recuerdes.</p>
+            <div class="step-img-hint">
+              <span>📁</span>
+              <span>Debes obtener una carpeta llamada <strong>handset-extension</strong> con varios archivos dentro.</span>
+            </div>
+          </div>
+        </div>
+        <div class="install-step">
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <strong>Abre el gestor de extensiones de Chrome</strong>
+            <p>En la barra de direcciones escribe:</p>
+            <span class="step-code">chrome://extensions</span>
+            <p class="step-enter">y presiona <kbd>Enter</kbd></p>
+          </div>
+        </div>
+        <div class="install-step">
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <strong>Activa el "Modo desarrollador"</strong>
+            <p>En la esquina superior derecha activa el interruptor <strong>Modo desarrollador</strong>.</p>
+            <div class="step-img-hint">
+              <span>🔧</span>
+              <span>Al activarlo aparecerán tres botones nuevos en la parte superior izquierda.</span>
+            </div>
+          </div>
+        </div>
+        <div class="install-step">
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <strong>Carga la extensión descomprimida</strong>
+            <p>Haz clic en <strong class="accent-text">"Cargar descomprimida"</strong> y selecciona la carpeta <span class="step-code">handset-extension</span>.</p>
+          </div>
+        </div>
+        <div class="install-step">
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <strong>¡Listo! Fija el ícono en la barra</strong>
+            <p>Clic en el ícono del rompecabezas 🧩 → busca <strong>Handset</strong> y fíjala con el pin 📌.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="hs-divider"></div>
+
+      <!-- CÓMO USAR -->
+      <div class="hs-title">🎯 Cómo usar la extensión</div>
+      <div class="uso-grid">
+        <div class="uso-card">
+          <div class="uso-icon">▶️</div>
+          <h3>Abre un video en YouTube</h3>
+          <p>Ve a <strong>youtube.com</strong> y abre cualquier video. Activa los subtítulos con el botón <strong>CC</strong> del reproductor.</p>
+        </div>
+        <div class="uso-card">
+          <div class="uso-icon">🖱️</div>
+          <h3>Haz clic en el ícono Handset</h3>
+          <p>En la barra de Chrome haz clic en el ícono de Handset. Se abrirá el panel con dos pestañas: <strong>Modo 2D</strong> y <strong>Modo 3D</strong>.</p>
+        </div>
+        <div class="uso-card">
+          <div class="uso-icon">🔤</div>
+          <h3>Modo 2D — Imágenes de señas</h3>
+          <p>Cada letra del subtítulo se muestra como imagen de la seña correspondiente en LSC. Cambian en tiempo real.</p>
+        </div>
+        <div class="uso-card">
+          <div class="uso-icon">🤖</div>
+          <h3>Modo 3D — Avatar animado</h3>
+          <p>Un avatar 3D realiza las señas. Selecciona la pestaña <strong>Modo 3D</strong> y espera a que cargue el modelo.</p>
+        </div>
+        <div class="uso-card">
+          <div class="uso-icon">⚡</div>
+          <h3>Activar / Desactivar</h3>
+          <p>Usa el botón <strong>Activar / Desactivar</strong> dentro del panel para pausar la extensión sin desinstalarla.</p>
+        </div>
+        <div class="uso-card">
+          <div class="uso-icon">💡</div>
+          <h3>Consejo de práctica</h3>
+          <p>Combínala con el <strong>Dictado en Señas</strong> de esta pestaña para reforzar lo que aprendes viendo videos.</p>
+        </div>
+      </div>
+
+      <div class="req-box req-warning">
+        <span>⚠️</span>
+        <div>
+          <strong class="warning-text">Importante:</strong> solo funciona en <strong>Chrome</strong> o <strong>Edge</strong> para escritorio. No compatible con Firefox, Safari ni móviles. El video debe tener subtítulos activados.
+        </div>
+      </div>
+    </div>
+
+    <div class="hs-divider hs-divider-centered"></div>
+
+    <!-- TABS DE MODO PRÁCTICA -->
+    <div class="ext-mode-bar">
+      <button class="ext-tab active" onclick="setExtMode('dictado')"   id="extTab-dictado">✍️ Dictado en Señas</button>
+      <button class="ext-tab"        onclick="setExtMode('velocidad')" id="extTab-velocidad">⚡ Prueba de Velocidad</button>
+      <button class="ext-tab"        onclick="setExtMode('reto')"      id="extTab-reto">🏅 Reto Diario</button>
+    </div>
+
+    <!-- PANEL 1: DICTADO -->
+    <div class="ext-panel active" id="panel-dictado">
+      <div class="dictado-card">
+        <p class="dictado-instruccion">Observa la seña y escribe lo que representa</p>
+        <div class="dictado-word" id="dictadoEmoji">🤟</div>
+        <p class="dictado-hint">Categoría: <strong id="dictadoCat">—</strong></p>
+        <div class="dictado-input-row">
+          <input class="dictado-input" id="dictadoInput" placeholder="Escribe aquí…"
+                 onkeydown="if(event.key==='Enter')checkDictado()"
+                 autocomplete="off" autocorrect="off" spellcheck="false"/>
+          <button class="btn-check" onclick="checkDictado()">✓</button>
+        </div>
+        <div class="dictado-fb" id="dictadoFb"></div>
+        <div class="dictado-stats">
+          <div class="ds-item">
+            <div class="ds-val" id="dStat-ok">0</div>
+            <div class="ds-lbl">Correctas</div>
+          </div>
+          <div class="ds-item">
+            <div class="ds-val ds-val-wrong" id="dStat-fail">0</div>
+            <div class="ds-lbl">Errores</div>
+          </div>
+          <div class="ds-item">
+            <div class="ds-val ds-val-gold" id="dStat-streak">0</div>
+            <div class="ds-lbl">Racha</div>
+          </div>
+        </div>
+        <div class="dictado-btns">
+          <button class="outline-btn" onclick="nextDictado()">Siguiente →</button>
+          <button class="outline-btn" onclick="showDictadoAnswer()">Ver respuesta</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 2: VELOCIDAD -->
+    <div class="ext-panel" id="panel-velocidad">
+      <div class="speed-area">
+        <div class="speed-config" id="speedConfig">
+          <h2 class="speed-config-title">⚙️ Configurar ronda</h2>
+          <div class="speed-label">
+            <span>Segundos por pregunta</span><span id="secVal">8 seg</span>
+          </div>
+          <input type="range" class="speed-slider" id="secSlider" min="3" max="15" value="8"
+                 oninput="document.getElementById('secVal').textContent=this.value+' seg'"/>
+          <div class="speed-label speed-label-mt">
+            <span>Número de preguntas</span><span id="qVal">10</span>
+          </div>
+          <input type="range" class="speed-slider" id="qSlider" min="5" max="20" value="10"
+                 oninput="document.getElementById('qVal').textContent=this.value"/>
+          <div class="speed-start-row">
+            <button class="start-btn" onclick="startSpeed()">¡Iniciar prueba!</button>
+          </div>
+        </div>
+
+        <div class="speed-game" id="speedGame" style="display:none">
+          <div class="speed-game-header">
+            <span id="speedProgress">Pregunta 1/10</span>
+            <span class="speed-pts" id="speedScore">0 pts</span>
+          </div>
+          <div class="speed-timer"   id="speedTimer">8</div>
+          <div class="speed-sign"    id="speedSign">🤟</div>
+          <div class="speed-question" id="speedQuestion">¿Qué representa esta seña?</div>
+          <div class="speed-options"  id="speedOptions"></div>
+        </div>
+
+        <div class="speed-result" id="speedResult" style="display:none">
+          <div class="speed-result-emoji">🏁</div>
+          <h2>¡Ronda completada!</h2>
+          <div class="final-score" id="speedFinalScore">0</div>
+          <p id="speedFinalMsg"></p>
+          <div class="speed-result-actions">
+            <button class="start-btn" onclick="resetSpeed()">Jugar de nuevo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PANEL 3: RETO DIARIO -->
+    <div class="ext-panel" id="panel-reto">
+      <div class="xp-bar-wrap" id="xpBar">
+        <div class="xp-avatar" id="xpAvatar">🌱</div>
+        <div class="xp-info">
+          <div class="xp-name"  id="xpName">Cargando…</div>
+          <div class="xp-level" id="xpLevel">Nivel 1 · Principiante</div>
+          <div class="xp-bar"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+        </div>
+        <div class="xp-pts" id="xpPts">0 XP</div>
+      </div>
+      <h2 class="section-heading">🏅 Retos de hoy</h2>
+      <div class="reto-grid" id="retoGrid"></div>
+      <h2 class="section-heading">📈 Tu historial de XP</h2>
+      <div class="card xp-history-card" id="xpHistory">
+        <p class="empty-msg" id="xpHistMsg">Completa retos para ver tu historial aquí.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast"></div>
+  <script src="../js/auth-nav.js"></script>
+  <script src="../js/app.js"></script>
+  <script src="../js/data.js"></script>
+  <script src="../js/extension.js"></script>
+</body>
+</html>

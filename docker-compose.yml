@@ -1,0 +1,59 @@
+
+services:
+
+  # Tu aplicación Node.js
+  app:
+    build: .                        # Usa el Dockerfile que creaste
+    ports:
+      - "3000:3000"                 # Puerto de tu PC : Puerto dentro del contenedor
+    environment:
+      - DB_HOST=mysql               # Nombre del servicio MySQL (no 'localhost')
+      - DB_USER=root
+      - DB_PASSWORD=mipassword
+      - DB_NAME=sisl
+      - OLLAMA_HOST=http://ollama:11434   # Apunta al servicio Ollama
+      - OLLAMA_MODEL=neural-chat:latest
+    depends_on:
+      mysql:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    volumes:
+      - .:/app                      # Sincroniza tu código con el contenedor (útil en desarrollo)
+      - /app/node_modules           # Protege node_modules del contenedor
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+  # Ollama (el LLM local)
+  ollama:
+    image: ollama/ollama            # Imagen oficial de Ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama   # Guarda los modelos descargados para no re-descargarlos
+
+  # MySQL
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: mipassword
+      MYSQL_DATABASE: sisl
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql   # Guarda los datos de la base aunque apagues Docker
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 30s
+
+# Nombres para los "discos" persistentes
+volumes:
+  ollama_data:
+  mysql_data:

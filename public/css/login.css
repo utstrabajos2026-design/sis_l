@@ -1,0 +1,176 @@
+/* ============================================================
+   login.css  —  Estilos exclusivos de la página de login
+   ============================================================ */
+
+:root {
+  --bg: #0A0C12;
+  --surface: #111420;
+  --surface2: #181C2A;
+  --border: rgba(255,255,255,.07);
+  --text: #F0F2FA;
+  --muted: rgba(240,242,250,.45);
+  --accent: #63FFB4;
+  --wrong: #FF6363;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 30%, rgba(99,255,180,.08), transparent 70%),
+    radial-gradient(ellipse 40% 60% at 80% 70%, rgba(99,200,255,.06), transparent 70%);
+  pointer-events: none;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 48px 40px;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 40px 80px rgba(0,0,0,.4);
+}
+.logo { display: flex; align-items: center; gap: 10px; margin-bottom: 32px; }
+.logo-icon { font-size: 28px; }
+.logo-text { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; }
+.logo-text span { color: var(--accent); }
+
+h2 { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; margin-bottom: 6px; }
+.subtitle { font-size: 13px; color: var(--muted); margin-bottom: 32px; }
+
+.tabs {
+  display: flex;
+  background: var(--surface2);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 32px;
+}
+.tab {
+  flex: 1;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font-family: 'Syne', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.tab.active {
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+
+.form-group { margin-bottom: 18px; }
+label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 8px;
+}
+input, select {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 16px;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  outline: none;
+  transition: border-color .2s;
+}
+input:focus, select:focus { border-color: var(--accent); }
+select option { background: var(--surface2); }
+
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 100px;
+  border: none;
+  cursor: pointer;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  background: var(--accent);
+  color: var(--bg);
+  transition: all .25s;
+  margin-top: 8px;
+  box-shadow: 0 0 30px rgba(99,255,180,.2);
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 0 50px rgba(99,255,180,.35); }
+.btn:disabled { opacity: .5; transform: none; cursor: not-allowed; }
+
+.btn-secondary {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+.btn-secondary:hover { background: var(--surface); box-shadow: 0 4px 12px rgba(99,255,180,.1); }
+
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color .2s;
+  margin-top: 4px;
+}
+.btn-link:hover { color: #7FFFC7; }
+
+.error-msg {
+  background: rgba(255,99,99,.1);
+  border: 1px solid rgba(255,99,99,.25);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--wrong);
+  margin-bottom: 16px;
+  display: none;
+}
+.success-msg {
+  background: rgba(99,255,180,.08);
+  border: 1px solid rgba(99,255,180,.2);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: none;
+}
+
+.form-section { display: none; }
+.form-section.active { display: block; }
+
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+@media (max-width: 480px) {
+  .row2 { grid-template-columns: 1fr; }
+}

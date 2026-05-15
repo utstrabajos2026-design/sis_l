@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Asistente IA · SIS-L</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/global.css" />
+  <link rel="stylesheet" href="/css/chatbot.css" />
+  
+  <!-- Verificar autenticación ANTES de cargar scripts de página -->
+  <script>
+    if (!localStorage.getItem('sis_l_token')) {
+      localStorage.setItem('sis_l_redirect', window.location.href);
+      window.location.href = '/acceso_requerido.html';
+    }
+  </script>
+</head>
+<body>
+  <nav id="nav-principal"></nav>
+
+  <div class="container">
+    <div class="page-header">
+      <div class="breadcrumb">
+        <a href="/index.html">Inicio</a>
+        <span class="sep">/</span>
+        <span>Asistente IA</span>
+      </div>
+      <h1 class="page-title">Asistente de <span class="accent-text">LSC</span></h1>
+      <p class="page-sub">Hazle preguntas sobre Lengua de Señas Colombiana, lecciones, vocabulario o cualquier duda del módulo.</p>
+    </div>
+
+    <div class="chat-layout">
+
+      <!-- SIDEBAR DE CONTEXTO -->
+      <aside class="chat-sidebar">
+        <div class="sidebar-box">
+          <div class="sb-title">🤖 Modelo activo</div>
+          <div class="model-badge" id="modelBadge">
+            <span class="model-dot"></span>
+            <span id="modelName">Cargando…</span>
+          </div>
+        </div>
+
+        <div class="sidebar-box">
+          <div class="sb-title">💡 Sugerencias</div>
+          <div class="suggestions">
+            <button class="suggestion-btn" onclick="sendSuggestion('¿Cómo se hace la seña del alfabeto A en LSC?')">
+              🔤 ¿Cómo se hace la seña de la letra A?
+            </button>
+            <button class="suggestion-btn" onclick="sendSuggestion('¿Cuál es la diferencia entre LSC y LSM?')">
+              🌎 ¿Diferencia entre LSC y LSM?
+            </button>
+            <button class="suggestion-btn" onclick="sendSuggestion('Dame un ejercicio para practicar el alfabeto dactilológico')">
+              📝 Dame un ejercicio de práctica
+            </button>
+            <button class="suggestion-btn" onclick="sendSuggestion('¿Cómo se saluda en Lengua de Señas Colombiana?')">
+              👋 ¿Cómo se saluda en LSC?
+            </button>
+            <button class="suggestion-btn" onclick="sendSuggestion('Explícame la gramática básica de la LSC')">
+              📚 Gramática básica de LSC
+            </button>
+            <button class="suggestion-btn" onclick="sendSuggestion('¿Qué consejos me das para aprender señas más rápido?')">
+              ⚡ Consejos para aprender más rápido
+            </button>
+          </div>
+        </div>
+
+        <div class="sidebar-box">
+          <div class="sb-title">📊 Esta sesión</div>
+          <div class="session-stats">
+            <div class="ss-item">
+              <span class="ss-num" id="msgCount">0</span>
+              <span class="ss-lbl">Mensajes</span>
+            </div>
+            <div class="ss-item">
+              <span class="ss-num" id="topicCount">0</span>
+              <span class="ss-lbl">Temas</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="clear-btn" onclick="clearChat()">🗑 Nueva conversación</button>
+      </aside>
+
+      <!-- ÁREA DE CHAT -->
+      <div class="chat-main">
+
+        <!-- STATUS BAR -->
+        <div class="chat-statusbar" id="chatStatusbar">
+          <div class="status-indicator" id="statusDot"></div>
+          <span id="statusText">Conectando con el asistente…</span>
+        </div>
+
+        <!-- MENSAJES -->
+        <div class="chat-messages" id="chatMessages">
+          <!-- Mensaje de bienvenida inicial -->
+          <div class="msg-wrapper msg-ai" id="welcomeMsg">
+            <div class="msg-avatar">🤟</div>
+            <div class="msg-bubble">
+              <div class="msg-header">
+                <span class="msg-name">Asistente LSC</span>
+                <span class="msg-time" id="welcomeTime"></span>
+              </div>
+              <div class="msg-text">
+                ¡Hola! Soy tu asistente de aprendizaje de <strong>Lengua de Señas Colombiana</strong>. 🤟<br><br>
+                Puedo ayudarte con:
+                <ul class="msg-list">
+                  <li>Explicar señas del alfabeto, saludos, números y más</li>
+                  <li>Resolver dudas sobre la gramática de la LSC</li>
+                  <li>Darte ejercicios y consejos de práctica</li>
+                  <li>Información cultural sobre la comunidad sorda en Colombia</li>
+                </ul>
+                ¿Qué quieres aprender hoy?
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TYPING INDICATOR -->
+        <div class="typing-indicator" id="typingIndicator" style="display:none">
+          <div class="msg-avatar small">🤖</div>
+          <div class="typing-bubble">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <!-- ERROR BANNER -->
+        <div class="error-banner" id="errorBanner" style="display:none">
+          <span>⚠️</span>
+          <span id="errorText">Error de conexión con Ollama. Asegúrate de que esté corriendo en <code>localhost:11434</code></span>
+          <button onclick="dismissError()">✕</button>
+        </div>
+
+        <!-- INPUT AREA -->
+        <div class="chat-input-area">
+          <div class="input-wrapper">
+            <textarea
+              id="chatInput"
+              class="chat-input"
+              placeholder="Escribe tu pregunta sobre LSC…"
+              rows="1"
+              onkeydown="handleKey(event)"
+              oninput="autoResize(this)"
+              maxlength="1000"
+            ></textarea>
+            <button class="send-btn" id="sendBtn" onclick="sendMessage()" title="Enviar (Enter)">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M22 2L15 22 11 13 2 9l20-7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="input-footer">
+            <span class="char-count"><span id="charCount">0</span>/1000</span>
+            <span class="input-hint">Enter para enviar · Shift+Enter para salto de línea</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="/js/auth-nav.js"></script>
+  <script src="/js/app.js"></script>
+  <script src="/js/chatbot.js"></script>
+  <script>
+    protegerPagina();
+    inyectarNav('chatbot');
+  </script>
+</body>
+</html>
