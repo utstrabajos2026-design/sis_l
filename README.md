@@ -7,161 +7,219 @@ sdk: docker
 pinned: false
 ---
 
-# SIS-L — Fullstack MVW con Node.js + MySQL
-## Sistema de Interpretación y Aprendizaje de Lengua de Señas
+# SIS-L · Sistema de Interpretación y Aprendizaje de Lengua de Señas
+
+Plataforma interactiva para aprender **Lengua de Señas Colombiana (LSC)** con lecciones, práctica guiada, quizzes y chatbot con IA.
 
 ---
 
-## Arquitectura MVW completa en JavaScript
+## 🚀 Despliegue en Hugging Face Spaces (RÁPIDO)
+
+### Pasos 1-3: Setup Inicial
+
+```bash
+# 1. Clonar tu Space en HF
+git clone https://huggingface.co/spaces/TU_USUARIO/sis-l-app
+cd sis-l-app
+
+# 2. Copiar archivos del proyecto
+# (Usa el comando de tu sistema operativo)
+
+# 3. Editar .env.production con credenciales de BD
+```
+
+### Paso 4: Configurar Base de Datos Externa
+
+**Necesitas una BD MySQL externa** (no puede ser local en HF).
+
+**Opciones recomendadas:**
+- **Railway**: https://railway.app (más rápido)
+- **Render**: https://render.com
+- **Clever Cloud**: https://www.clever-cloud.com
+
+Ejemplo con Railway:
+1. Crea proyecto en Railway
+2. Añade servicio MySQL
+3. Copia credenciales a `.env.production`
+4. En HF Space > Settings > Secrets, añade:
+   - `DB_PASSWORD`
+   - `JWT_SECRET`
+
+### Paso 5: Push y Deploy
+
+```bash
+git add .
+git commit -m "Setup SIS-L en HF Spaces"
+git push
+```
+
+¡Listo! HF construye y deploya automáticamente.
+
+---
+
+## 🏗️ Arquitectura MVW (Local Dev)
 
 ```
 sis_l_fullstack/
 │
 ├── server.js                ← Arranque del servidor Express
 ├── package.json             ← Dependencias Node.js
-├── .env                     ← Variables de entorno (BD, JWT)
+├── .env                     ← Variables de entorno (desarrollo)
+├── .env.production          ← Variables para HF Spaces
 │
 ├── model/
 │   └── index.js             ◄── CAPA MODEL
 │                                Consultas SQL puras a MySQL
-│                                NO tiene lógica de negocio
 │
 ├── watcher/
 │   └── index.js             ◄── CAPA WATCHER
 │                                Toda la lógica de negocio
-│                                AuthWatcher, AprendizajeWatcher,
-│                                QuizWatcher, DashboardWatcher
 │
 ├── view/
 │   └── routes.js            ◄── CAPA VIEW (Backend)
 │                                Rutas Express / API REST
-│                                Solo recibe y responde JSON
 │
 ├── config/
 │   ├── db.js                ← Conexión MySQL con pool
-│   └── seed.js              ← Crea tablas + datos iniciales
+│   └── seed.js              ← Script inicialización BD
 │
 └── public/                  ◄── CAPA VIEW (Frontend)
-    ├── index.html               Página de inicio
-    ├── css/
-    │   └── global.css
-    ├── js/
-    │   ├── api.js           ← Cliente HTTP (llama al backend)
-    │   ├── app.js           ← Utilidades globales
-    │   ├── data.js          ← Datos de señas LSC
-    │   ├── lecciones.js
-    │   ├── quiz.js
-    │   ├── practica.js
-    │   └── progreso.js
-    └── pages/
-        ├── login.html       ← Login/Registro (nuevo)
-        ├── lecciones.html
-        ├── quiz.html
-        ├── practica.html
-        └── progreso.html
+    ├── pages/               ← Páginas HTML
+    ├── js/                  ← JavaScript cliente
+    ├── css/                 ← Estilos
+    └── locales/             ← Traducciones (ES/EN)
 ```
+
+### Flujo MVW
+
+```
+Navegador → view/routes.js → watcher/index.js → model/index.js → MySQL
+```
+
+**Reglas de oro:**
+- ✅ View → Watcher → Model (solo este sentido)
+- ❌ View NO toca Model directamente
+- ❌ Watcher NO maneja req/res
 
 ---
 
-## Flujo de datos MVW
+## 💻 Ejecutar Localmente (Desarrollo)
 
-```
-Navegador (HTML)
-     │  fetch('/api/...')
-     ▼
-view/routes.js          ← VIEW: recibe HTTP, nada más
-     │  Llama Watcher
-     ▼
-watcher/index.js        ← WATCHER: lógica de negocio
-     │  Llama Model
-     ▼
-model/index.js          ← MODEL: consulta SQL
-     │
-     ▼
-MySQL (sis_l_db)        ← BASE DE DATOS
-```
+### Requisitos
+- Node.js 20+
+- MySQL 8+ (o Docker Compose)
 
-### Reglas de oro MVW (nunca violar):
-- ✅ View → Watcher → Model (único sentido)
-- ❌ View NO toca el Model directamente
-- ❌ Model NO conoce al Watcher ni a la View
-- ❌ Watcher NO escribe HTML ni maneja req/res
+### Con Docker Compose
 
----
-
-## Tablas en MySQL
-
-| Tabla               | Relacionada con          |
-|---------------------|--------------------------|
-| `usuarios`          | RF01, RF02               |
-| `sesiones`          | JWT / RNF-S1, S2         |
-| `lecciones`         | RF03, RF04               |
-| `progreso_leccion`  | Avance por lección       |
-| `senas_aprendidas`  | Señas marcadas           |
-| `quizzes`           | Evaluaciones             |
-| `resultados_quiz`   | Historial de quizzes     |
-| `actividad_diaria`  | Racha y calendario       |
-| `logs_sistema`      | RNF-F1 auditoría         |
-
----
-
-## Cómo correrlo paso a paso
-
-### Requisitos previos
-- Node.js 18 o superior
-- MySQL 8 corriendo en tu equipo
-
-### 1. Instalar dependencias
 ```bash
+# Inicia MySQL + app automáticamente
+docker-compose up
+
+# En otra terminal: inicializar BD
+docker-compose exec app npm run seed
+
+# Abre: http://localhost:3000
+```
+
+### Sin Docker (Manual)
+
+```bash
+# 1. Instalar dependencias
 npm install
-```
 
-### 2. Configurar la BD en el archivo .env
-```
-DB_HOST     = localhost
-DB_PORT     = 3306
-DB_USER     = root
-DB_PASSWORD = tu_password
-DB_NAME     = sis_l_db
-JWT_SECRET  = algo_muy_secreto
-PORT        = 3000
-```
+# 2. Configurar .env
+# DB_HOST=localhost, etc.
 
-### 3. Crear tablas e insertar datos iniciales
-```bash
+# 3. Crear tablas + datos
 npm run seed
+
+# 4. Iniciar servidor
+npm run dev      # Con auto-reload
+npm start        # Producción
+
+# Abre: http://localhost:3000
 ```
 
-### 4. Iniciar el servidor
-```bash
-npm run dev        # con auto-reload (desarrollo)
-npm start          # producción
-```
-
-### 5. Abrir en el navegador
-```
-http://localhost:3000
-```
-
-### Usuario demo creado por el seed
-```
-Correo:     admin@sisl.edu.co
-Contraseña: Admin1234
-```
+**Usuario demo:** admin@sisl.edu.co / Admin1234
 
 ---
 
-## Endpoints API disponibles
+## 🔌 API REST Endpoints
 
-| Método | Ruta                    | Auth | Descripción              |
-|--------|-------------------------|------|--------------------------|
-| POST   | /api/auth/registro      | No   | Crear cuenta             |
-| POST   | /api/auth/login         | No   | Iniciar sesión           |
-| POST   | /api/auth/logout        | Sí   | Cerrar sesión            |
-| GET    | /api/lecciones          | Sí   | Listar lecciones         |
-| POST   | /api/lecciones/completar| Sí   | Marcar lección completa  |
-| POST   | /api/senas/aprender     | Sí   | Guardar seña aprendida   |
-| GET    | /api/quizzes            | Sí   | Listar quizzes           |
-| POST   | /api/quizzes/resultado  | Sí   | Guardar resultado quiz   |
-| GET    | /api/dashboard          | Sí   | Stats del usuario        |
-| GET    | /api/health             | No   | Estado del servidor      |
+| Método | Ruta                     | Auth | Descripción             |
+|--------|--------------------------|------|-------------------------|
+| POST   | /api/auth/registro       | No   | Crear cuenta            |
+| POST   | /api/auth/login          | No   | Iniciar sesión          |
+| POST   | /api/auth/logout         | Sí   | Cerrar sesión           |
+| GET    | /api/lecciones           | Sí   | Listar lecciones        |
+| POST   | /api/lecciones/completar | Sí   | Marcar completa         |
+| POST   | /api/senas/aprender      | Sí   | Guardar seña            |
+| GET    | /api/quizzes             | Sí   | Listar evaluaciones     |
+| POST   | /api/quizzes/resultado   | Sí   | Guardar resultado       |
+| GET    | /api/dashboard           | Sí   | Estadísticas usuario    |
+| POST   | /api/chatbot/message     | Sí   | Chat con IA             |
+| GET    | /api/health              | No   | Estado del servidor     |
+
+---
+
+## 🛠️ Variables de Entorno
+
+### Desarrollo (.env)
+```env
+PORT=3000
+NODE_ENV=development
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=password
+DB_NAME=sisl
+JWT_SECRET=dev-secret-123
+```
+
+### Producción (.env.production)
+```env
+PORT=7860
+NODE_ENV=production
+DB_HOST=tu-bd.railway.app
+DB_PORT=3306
+DB_USER=admin
+DB_PASSWORD=***SECRETO***
+DB_NAME=sisl
+JWT_SECRET=***CAMBIAR***
+SMTP_HOST=smtp.gmail.com
+SMTP_USER=tu-email@gmail.com
+SMTP_PASS=***SECRETO***
+```
+
+**⚠️ Nunca hardcodees secretos. Usa HF Spaces > Settings > Secrets**
+
+---
+
+## 🚨 Troubleshooting
+
+| Problema | Solución |
+|----------|----------|
+| "Cannot connect to DB" | Verifica credenciales en .env.production |
+| "Port 7860 already in use" | HF Spaces lo asigna automáticamente |
+| "CORS error" | Añade IP de HF Spaces a whitelist |
+| "IA no funciona" | OLLAMA_HOST debe quedar en blanco |
+| "Template error" | Revisa logs en HF Spaces Dashboard |
+
+---
+
+## 📚 Documentación Completa
+
+- [HF Spaces Docs](https://huggingface.co/docs/hub/spaces)
+- [Dockerfile Reference](https://huggingface.co/docs/hub/spaces-sdks-docker)
+- [Express.js Guide](https://expressjs.com)
+- [MySQL Node.js](https://github.com/mysqljs/mysql)
+
+---
+
+## 📜 Licencia
+
+MIT - Libre para usar, modificar y distribuir
+
+---
+
+**¿Problemas?** Revisa los logs en HF Spaces o abre un issue en GitHub.

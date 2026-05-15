@@ -1,0 +1,671 @@
+═══════════════════════════════════════════════════════════════════════════════
+  🚀 TUTORIAL: CÓMO DESPLEGAR SIS-L EN HUGGING FACE SPACES
+     (Para personas sin experiencia en despliegue)
+═══════════════════════════════════════════════════════════════════════════════
+
+¡Hola! Este tutorial te guiará PASO A PASO para poner tu aplicación SIS-L 
+en línea en Hugging Face Spaces. No necesitas experiencia previa.
+
+Tiempo estimado: 20-30 minutos
+Nivel: Principiante ✅
+
+═══════════════════════════════════════════════════════════════════════════════
+TABLA DE CONTENIDOS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Qué necesitas (Requisitos)
+2. Crear cuenta en Hugging Face
+3. Crear un "Space" en Hugging Face
+4. Preparar tu computadora
+5. Descargar tu Space en tu computadora
+6. Copiar archivos de tu proyecto
+7. Crear una Base de Datos en la nube
+8. Configurar las variables de entorno
+9. Subir todo a Hugging Face
+10. Verificar que funciona
+11. Solución de problemas comunes
+
+═══════════════════════════════════════════════════════════════════════════════
+PASO 1: QUÉ NECESITAS (REQUISITOS)
+═══════════════════════════════════════════════════════════════════════════════
+
+Antes de empezar, asegúrate de tener:
+
+✅ CUENTA EN HUGGING FACE (gratuita)
+   - Ve a: https://huggingface.co
+   - Clic en "Sign up" (Registrarse)
+   - Completa el formulario y verifica tu email
+   - ¡Listo! Ya tienes tu cuenta.
+
+✅ GIT INSTALADO EN TU COMPUTADORA
+   - ¿Qué es Git? = Una herramienta para compartir código
+   - Descarga desde: https://git-scm.com
+   - Instala normalmente (Next, Next, Finish)
+   - Para verificar: abre PowerShell y escribe: git --version
+   
+✅ NAVEGADOR WEB
+   - Chrome, Firefox, Edge, Safari... cualquiera funciona
+
+✅ UN EDITOR DE TEXTO
+   - Bloc de notas está bien
+   - O mejor: Visual Studio Code (https://code.microsoft.com)
+
+✅ PACIENCIA Y CAFÉ ☕
+   - Este proceso es más fácil de lo que parece
+
+═══════════════════════════════════════════════════════════════════════════════
+PASO 2: CREAR CUENTA EN HUGGING FACE
+═══════════════════════════════════════════════════════════════════════════════
+
+Si ya tienes cuenta, SALTA este paso.
+
+A. Ve a: https://huggingface.co
+
+B. En la esquina superior derecha, busca el botón "Sign up"
+   - Si no lo ves, haz clic en el icono de persona/perfil
+
+C. Completa el formulario:
+   - Username: tu-nombre-de-usuario (ej: juan_perez)
+   - Email: tu-correo@gmail.com
+   - Password: contraseña segura (min 8 caracteres)
+   - Haz clic en "Create account"
+
+D. Revisa tu email:
+   - HF te enviará un email de verificación
+   - Haz clic en el enlace "Verify email"
+   - Si no lo ves, revisa "Spam" o "Correo no deseado"
+
+E. ¡Listo! Ya estás registrado en Hugging Face
+
+═══════════════════════════════════════════════════════════════════════════════
+PASO 3: CREAR UN "SPACE" EN HUGGING FACE
+═══════════════════════════════════════════════════════════════════════════════
+
+Un "Space" es como una carpeta en la nube donde vivirá tu aplicación.
+
+A. Ve a: https://huggingface.co/new-space
+
+B. Completa los campos:
+
+   1️⃣ "Space name" (Nombre del Space)
+      Escribe: sis-l-app
+      (o si prefieres otro nombre, está bien)
+
+   2️⃣ "License" (Licencia)
+      Selecciona: MIT
+      (esto significa que es software libre)
+
+   3️⃣ "Space SDK" (Tipo de aplicación)
+      ⚠️ IMPORTANTE: Selecciona "Docker"
+      (no selecciones Streamlit, Gradio ni otras opciones)
+
+   4️⃣ "Visibility" (Privacidad)
+      Selecciona: Public (Público)
+      (para que otros puedan verla)
+
+C. Haz clic en el botón azul "Create space"
+
+D. ¡Espera! HF crea tu Space (toma 10 segundos)
+
+E. Verás una página con tu nuevo Space vacío
+
+🎉 ¡Acabas de crear tu primer Space!
+
+═══════════════════════════════════════════════════════════════════════════════
+PASO 4: PREPARAR TU COMPUTADORA
+═══════════════════════════════════════════════════════════════════════════════
+
+A. Abre PowerShell (o Terminal)
+   - En Windows: Presiona Windows + R
+   - Escribe: powershell
+   - Presiona Enter
+
+B. Navega a una carpeta donde quieras descargar tu Space
+   Ejemplo:
+   
+   cd C:\Users\TuUsuario\Desktop\Proyectos
+   
+   (reemplaza "TuUsuario" con tu nombre de usuario de Windows)
+   
+   Si la carpeta no existe, créala:
+   mkdir C:\Users\TuUsuario\Desktop\Proyectos
+
+C. Verifica que estás en el lugar correcto escribiendo:
+   pwd
+   
+   Deberías ver algo como:
+   C:\Users\TuUsuario\Desktop\Proyectos
+
+✅ Tu computadora está lista
+
+═══════════════════════════════════════════════════════════════════════════════
+PASO 5: DESCARGAR TU SPACE EN TU COMPUTADORA
+═══════════════════════════════════════════════════════════════════════════════
+
+A. Ve a tu Space en HF (https://huggingface.co/spaces/TU_USUARIO/sis-l-app)
+   Reemplaza "TU_USUARIO" con tu nombre de usuario
+
+B. En la esquina superior derecha, busca el botón "⋯" (tres puntos)
+
+C. Haz clic en "Clone repository"
+
+D. Copia la URL que aparece (algo como):
+   https://huggingface.co/spaces/TU_USUARIO/sis-l-app
+
+E. Vuelve a PowerShell y ejecuta:
+   
+   git clone https://huggingface.co/spaces/TU_USUARIO/sis-l-app
+   
+   (Reemplaza "TU_USUARIO" con tu usuario real)
+
+F. Espera a que termine (toma pocos segundos)
+
+G. Ahora entra en la carpeta:
+   
+   cd sis-l-app
+
+H. Verifica que estás dentro con:
+   
+   ls
+   
+   Deberías ver una carpeta con algunos archivos
+
+✅ Tu Space está descargado en tu computadora
+
+═══════════════════════════════════════════════════════════════════════════════
+PASO 6: COPIAR ARCHIVOS DE TU PROYECTO
+═══════════════════════════════════════════════════════════════════════════════
+
+Ahora copiaremos todos los archivos de SIS-L a tu carpeta sis-l-app.
+
+⚠️ IMPORTANTE: En Windows, PowerShell a veces tiene problemas con ciertos comandos.
+                Si algo falla, puedes hacer esto manualmente (ver abajo).
+
+OPCIÓN A: Usando PowerShell (automático)
+═════════════════════════════════════════
+
+A. En PowerShell, ejecuta este comando (TODO EN UNA LÍNEA):
+
+   Copy-Item C:\xampp\htdocs\sis_l_fullstack\* -Destination . -Recurse -Force
+
+   (Reemplaza "C:\xampp\htdocs" con tu ruta real de XAMPP si es diferente)
+
+B. Espera a que termine (20-30 segundos)
+
+C. Verifica que los archivos se copiaron:
+   
+   ls
+
+   Deberías ver: server.js, package.json, public/, config/, etc.
+
+
+OPCIÓN B: Manualmente (si PowerShell falla)
+═════════════════════════════════════════════
+
+Si el comando anterior no funciona, hazlo manualmente:
+
+A. Abre el Explorador de Archivos (Windows Explorer)
+
+B. Ve a C:\xampp\htdocs\sis_l_fullstack
+
+C. Selecciona TODOS los archivos (Ctrl + A)
+
+D. Cópialos (Ctrl + C)
+
+E. Ve a tu carpeta del Space:
+   C:\Users\TuUsuario\Desktop\Proyectos\sis-l-app
+
+F. Pega los archivos (Ctrl + V)
+
+G. Si te pregunta si deseas reemplazar archivos, haz clic en "Sí para todos"
+
+✅ Tus archivos están en el Space
+
+═══════════════════════════════════════════════════════════════════════════════
+PASO 7: CREAR UNA BASE DE DATOS EN LA NUBE
+═══════════════════════════════════════════════════════════════════════════════
+
+¿Por qué en la nube? Porque Hugging Face Spaces no puede ejecutar MySQL localmente.
+Necesitamos una BD externa. Aquí te muestro la opción MÁS FÁCIL: Railway.
+
+A. Ve a: https://railway.app
+
+B. Haz clic en "Start Project"
+
+C. Haz clic en el botón de GitHub (para registrarse)
+   (O si prefieres email: haz clic en "Continue with Email")
+
+D. Sigue los pasos para conectar tu GitHub o email
+
+E. Una vez dentro, en el dashboard, haz clic en "+ New Project"
+
+F. Busca "MySQL" en la lista
+
+G. Haz clic en "MySQL"
+
+H. Espera a que se cree (toma 10 segundos)
+
+I. Ahora Railway está creando tu BD
+
+J. En la parte izquierda, verás "mysql" en la lista. Haz clic en ella.
+
+K. En la derecha, busca la pestaña "Connect"
+
+L. Copia la URL que aparece (algo como):
+   mysql://user:password@host:port/railway
+   
+   Aquí está lo que necesitas extraer:
+   - DB_HOST = la parte después de @ y antes de :
+     Ejemplo: si ves "root@mysql.railway.app:3306"
+              DB_HOST = mysql.railway.app
+   
+   - DB_USER = la parte antes del @
+     Ejemplo: root
+   
+   - DB_PASSWORD = la parte entre : y @
+     Ejemplo: si ves "root:abc123xyz@..."
+              DB_PASSWORD = abc123xyz
+   
+   - DB_PORT = 3306 (siempre)
+   
+   - DB_NAME = "railway" o como aparezca en la URL
+
+M. ✏️ Abre el Bloc de notas y copia estos valores. Los necesitarás pronto.
+
+✅ Ya tienes tu Base de Datos en la nube
+
+═══════════════════════════════════════════════════════════════════════════════
+PASO 8: CONFIGURAR LAS VARIABLES DE ENTORNO
+═══════════════════════════════════════════════════════════════════════════════
+
+Las "variables de entorno" son como configuraciones que tu aplicación necesita
+para funcionar. Son como "instrucciones secretas" que le dices al servidor.
+
+A. Abre el archivo ".env.production" en tu carpeta sis-l-app
+   - Con el Bloc de notas
+   - O con Visual Studio Code
+   
+   (Si no ves archivos que empiezan con punto, haz visible archivos ocultos)
+
+B. Dentro encontrarás algo como:
+
+   PORT=7860
+   DB_HOST=${DB_HOST:-localhost}
+   DB_USER=${DB_USER:-root}
+   ...
+
+C. Edita SOLO los valores entre comillas o después del =
+   Reemplaza con los valores que copiaste de Railway:
+
+   Antes:
+   DB_HOST=${DB_HOST:-localhost}
+   
+   Después:
+   DB_HOST=mysql.railway.app
+
+   
+   Antes:
+   DB_USER=${DB_USER:-root}
+   
+   Después:
+   DB_USER=root
+
+   
+   Antes:
+   DB_PASSWORD=${DB_PASSWORD:-}
+   
+   Después:
+   DB_PASSWORD=abc123xyz
+
+   
+   Antes:
+   DB_NAME=${DB_NAME:-sisl}
+   
+   Después:
+   DB_NAME=railway
+
+   Para JWT_SECRET, pon algo aleatorio y seguro (cualquier texto largo):
+   JWT_SECRET=miapp-secreto-super-largo-12345
+
+D. Guarda el archivo (Ctrl + S)
+
+E. ⚠️ MUY IMPORTANTE: No compartas este archivo con nadie.
+                      El DB_PASSWORD es secreto.
+
+✅ Variables configuradas
+
+═══════════════════════════════════════════════════════════════════════════════
+PASO 9: SUBIR TODO A HUGGING FACE
+═══════════════════════════════════════════════════════════════════════════════
+
+Ahora subiremos todos los archivos a tu Space en HF.
+
+A. En PowerShell, asegúrate de estar en la carpeta sis-l-app:
+
+   pwd
+   
+   Deberías ver:
+   C:\Users\TuUsuario\Desktop\Proyectos\sis-l-app
+
+B. Ahora ejecuta estos comandos EN ORDEN:
+
+   PASO 1: Ver qué archivos hay
+   ─────────────────────────
+   git status
+   
+   Deberías ver una lista de archivos "nuevos" (en rojo)
+
+   
+   PASO 2: Agregar todos los archivos
+   ─────────────────────────────────
+   git add .
+   
+   (El punto significa "agregar TODO")
+
+   
+   PASO 3: Crear un "commit" (guardar cambios)
+   ──────────────────────────────────────────
+   git commit -m "Agregar archivos de SIS-L"
+   
+   Verás muchas líneas de output. ¡Eso es normal!
+
+   
+   PASO 4: Subir a Hugging Face
+   ────────────────────────────
+   git push
+   
+   ⚠️ Aquí te pedirá tu token de HF (contraseña)
+   
+   Si ves: "Please authenticate yourself"
+   
+   Necesitas crear un token en HF:
+   
+   1. Ve a: https://huggingface.co/settings/tokens
+   2. Haz clic en "New token"
+   3. Dale un nombre (ej: "mi-token")
+   4. Selecciona: "write" (permiso de escritura)
+   5. Copia el token
+   6. Vuelve a PowerShell
+   7. Pega el token
+   8. Presiona Enter
+
+C. Espera a que suba (toma 30-60 segundos)
+
+D. Verás un mensaje como:
+   "Everything up-to-date"
+   o
+   "master -> master"
+   
+   ¡Eso significa que funcionó!
+
+✅ Tus archivos están en Hugging Face
+
+═══════════════════════════════════════════════════════════════════════════════
+PASO 10: CONFIGURAR SECRETOS EN HUGGING FACE
+═══════════════════════════════════════════════════════════════════════════════
+
+Los "Secretos" son como variables privadas que HF guarda de forma segura.
+No queremos que tu contraseña de BD sea visible en el código.
+
+A. Ve a tu Space en HF:
+   https://huggingface.co/spaces/TU_USUARIO/sis-l-app
+
+B. En la barra lateral izquierda, busca "Settings"
+
+C. En el menú de Settings, busca "Secrets" (Secretos)
+
+D. Haz clic en "Add a secret"
+
+E. Agreguemos 3 secretos. Para cada uno:
+
+   1️⃣ PRIMER SECRETO: DB_PASSWORD
+      ─────────────────────────────
+      Name: DB_PASSWORD
+      Value: (el password que copiaste de Railway)
+      Haz clic en "Add secret"
+
+   2️⃣ SEGUNDO SECRETO: JWT_SECRET
+      ──────────────────────────────
+      Name: JWT_SECRET
+      Value: miapp-secreto-super-largo-12345
+      Haz clic en "Add secret"
+
+   3️⃣ TERCER SECRETO: DB_HOST
+      ────────────────────────
+      Name: DB_HOST
+      Value: mysql.railway.app
+      Haz clic en "Add secret"
+
+F. Verifica que los 3 secretos aparecen en la lista
+
+✅ Los secretos están configurados
+
+═══════════════════════════════════════════════════════════════════════════════
+PASO 11: ESPERAR A QUE HF CONSTRUYA TU APLICACIÓN
+═══════════════════════════════════════════════════════════════════════════════
+
+Ahora Hugging Face va a:
+1. Descargar tu código
+2. Leer el archivo "dockerfile"
+3. Instalar Node.js y dependencias
+4. Iniciar tu aplicación
+5. Ponerla en línea
+
+A. Ve a tu Space: https://huggingface.co/spaces/TU_USUARIO/sis-l-app
+
+B. En la parte superior, verás el estado:
+   - 🔵 Azul = está construyendo
+   - 🟢 Verde = está lista
+   - 🔴 Roja = hay un error
+
+C. Haz clic en la pestaña "Logs" para ver lo que está pasando
+
+D. ESPERA a que el círculo se ponga VERDE (toma 3-5 minutos)
+
+E. Una vez verde, verás el URL de tu aplicación:
+   https://TU_USUARIO-sis-l-app.hf.space
+   
+   ¡ESTE ES TU NUEVO SITIO WEB!
+
+F. Haz clic en el URL o cópialo en una nueva pestaña del navegador
+
+🎉 ¡Tu aplicación está EN LÍNEA!
+
+═══════════════════════════════════════════════════════════════════════════════
+PASO 12: VERIFICAR QUE TODO FUNCIONA
+═══════════════════════════════════════════════════════════════════════════════
+
+A. En la URL de tu Space, añade "/api/health" al final:
+   
+   https://TU_USUARIO-sis-l-app.hf.space/api/health
+   
+   Deberías ver algo como:
+   {"status": "ok"}
+   
+   Si lo ves, ¡tu servidor está vivo!
+
+B. Ve a la página principal:
+   https://TU_USUARIO-sis-l-app.hf.space
+   
+   Deberías ver tu aplicación SIS-L
+
+C. Intenta hacer login con el usuario de demo:
+   Email: admin@sisl.edu.co
+   Contraseña: Admin1234
+
+D. Si ves la página de inicio de SIS-L después de login... ¡FUNCIONÓ!
+
+✅ ¡Tu aplicación está lista!
+
+═══════════════════════════════════════════════════════════════════════════════
+SOLUCIÓN DE PROBLEMAS COMUNES
+═══════════════════════════════════════════════════════════════════════════════
+
+❌ PROBLEMA: El círculo de estado es 🔴 rojo en mi Space
+
+SOLUCIONES:
+1. Haz clic en la pestaña "Logs"
+2. Lee el error (busca "ERROR" o "error")
+3. Busca en esta tabla:
+
+   Error que dice:           Solución:
+   ═════════════════════════════════════════════════════════════
+   "Cannot connect to DB"    • Verifica que DB_HOST, DB_USER,
+                               DB_PASSWORD sean correctos
+                             • Asegúrate que Railway está online
+
+   "Port already in use"     • HF automáticamente usa puerto 7860
+                             • No intentes cambiar el puerto
+
+   "ENOENT: no such         • Un archivo está faltando
+   file or directory"        • Verifica que copiaste TODOS
+                               los archivos correctamente
+
+   "npm ERR!"                • Problema instalando dependencias
+                             • Revisa que package.json sea correcto
+
+
+❌ PROBLEMA: Mi Space está verde pero no puedo ver la página
+
+SOLUCIONES:
+1. Espera 30 segundos más (a veces tarda)
+2. Recarga la página (Ctrl + R)
+3. Abre las DevTools (F12) y mira si hay errores
+4. Revisa los Logs del Space
+
+
+❌ PROBLEMA: El login no funciona / dice "Cannot connect"
+
+SOLUCIONES:
+1. La BD en Railway no está lista
+   → Ve a https://railway.app y verifica que está "Running" (verde)
+
+2. Las variables de DB están mal
+   → Revisa en HF Spaces > Settings > Secrets
+   → Compara con los valores de Railway
+
+3. El usuario de demo no existe
+   → Necesitas correr el "seed" en la BD
+   → Por ahora, intenta registrarte con un nuevo usuario
+
+
+❌ PROBLEMA: No me deja subir archivos a HF (git push falla)
+
+SOLUCIONES:
+1. ¿Creaste el token en HF?
+   → Ve a https://huggingface.co/settings/tokens
+   → Crea un token nuevo
+
+2. ¿El token tiene permiso "write"?
+   → Si no, elimina y crea uno nuevo
+
+3. ¿Escribiste bien el token?
+   → A veces copia un espacio al final sin verlo
+   → Intenta de nuevo
+
+
+❌ PROBLEMA: Todo se ve bien pero la base de datos no guarda nada
+
+SOLUCIONES:
+1. Verifica que DB_HOST es correcto (no localhost)
+2. Asegúrate que estás usando la BD de Railway, no local
+3. Revisa los Logs de HF para ver qué error hay
+
+
+═══════════════════════════════════════════════════════════════════════════════
+ACTUALIZAR TU APLICACIÓN DESPUÉS DE DESPLEGAR
+═══════════════════════════════════════════════════════════════════════════════
+
+¿Hiciste cambios y quieres subirlos?
+
+A. Haz tus cambios en los archivos
+
+B. En PowerShell (en la carpeta sis-l-app):
+
+   git add .
+   git commit -m "Descripción del cambio"
+   git push
+
+C. Espera a que HF reconstruya (3-5 minutos)
+
+D. ¡Listo! Tu cambio está en línea
+
+═══════════════════════════════════════════════════════════════════════════════
+PRÓXIMOS PASOS (DESPUÉS DE DESPLEGAR)
+═════════════════════════════════════════════════════════════════════════════════
+
+✅ Tu app está en línea. Ahora puedes:
+
+1. Crear más usuarios en tu aplicación
+2. Añadir más lecciones
+3. Personalizar los colores y textos
+4. Mejorar la interfaz
+5. Etc.
+
+Para cambios importantes:
+1. Modifica los archivos localmente
+2. Prueba localmente (npm run dev)
+3. Sube a HF (git add . && git commit -m "..." && git push)
+
+═════════════════════════════════════════════════════════════════════════════════
+RECURSOS Y AYUDA
+═════════════════════════════════════════════════════════════════════════════════
+
+Si tienes dudas:
+
+📚 Documentación:
+   - HF Spaces: https://huggingface.co/docs/hub/spaces
+   - Docker: https://docs.docker.com (búscalo en Google)
+   - Git: https://git-scm.com/doc
+
+💬 Comunidades:
+   - HF Community: https://huggingface.co/spaces (busca otros spaces)
+   - Stack Overflow: stackoverflow.com (para preguntas técnicas)
+
+🆘 Si algo no funciona:
+   - Lee el error completo en los Logs
+   - Busca el error en Google
+   - Pregunta en comunidades (incluye el error completo)
+
+═════════════════════════════════════════════════════════════════════════════════
+¡FELICIDADES! 🎉
+═════════════════════════════════════════════════════════════════════════════════
+
+¡Lo hiciste! Tu aplicación SIS-L está en línea y disponible para todo el mundo.
+
+Ahora puedes:
+✅ Compartir el URL con otros
+✅ Usarla en tu navegador desde cualquier lugar
+✅ Actualizar el código cuando quieras
+✅ Ver cómo otros usan tu aplicación
+
+¡Gracias por usar este tutorial y mucho éxito con SIS-L! 🚀
+
+═════════════════════════════════════════════════════════════════════════════════
+FIN DEL TUTORIAL
+═════════════════════════════════════════════════════════════════════════════════
+
+Preguntas frecuentes cortas:
+
+P: ¿Cuánto cuesta todo esto?
+R: ¡NADA! Todo es gratuito (HF Spaces y Railway tienen planes free).
+
+P: ¿Puedo cambiar el nombre del Space?
+R: Sí, en Settings del Space > Rename.
+
+P: ¿Qué pasa si mi BD se cae?
+R: Railway tiene backups automáticos. Reutiliza el sistema.
+
+P: ¿Otros pueden ver mi código?
+R: Sí, por defecto. Si quieres privado, cambia Visibility a Private.
+
+P: ¿Dónde veo los usuarios registrados?
+R: En tu BD de Railway. Puedes acceder con una herramienta como DBeaver.
+
+P: ¿Puedo usar mi dominio personalizado?
+R: Sí, pero es más avanzado. Busca "HF Spaces custom domain".
+
+═════════════════════════════════════════════════════════════════════════════════
+Última actualización: Mayo 2026
+Versión: 1.0
+═════════════════════════════════════════════════════════════════════════════════

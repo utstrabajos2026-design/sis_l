@@ -1,30 +1,34 @@
-# Usamos Node.js versión 20 como base (como instalar Node en una PC nueva)
+# === Imagen Base ===
 FROM node:20-alpine
 
-# Instalamos netcat y wget para scripts
-RUN apk add --no-cache netcat-openbsd wget
+# === Instalar Herramientas ===
+RUN apk add --no-cache \
+    netcat-openbsd \
+    wget \
+    curl \
+    && rm -rf /var/cache/apk/*
 
-# Creamos una carpeta dentro del contenedor para tu proyecto
+# === Configurar Directorio de Trabajo ===
 WORKDIR /app
 
-# Copiamos primero el package.json para instalar dependencias
+# === Instalar Dependencias (antes de copiar código) ===
+# Esto permite reutilizar la capa si el código cambia
 COPY package*.json ./
+RUN npm ci --only=production && npm cache clean --force
 
-# Instalamos las dependencias (el npm install de siempre)
-RUN npm install
-
-# Copiamos el resto de tu código
+# === Copiar Código de la Aplicación ===
 COPY . .
 
-# Copiar script de entrypoint
+# === Hacer Script Ejecutable ===
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
 
-# Limpiar caché para reducir tamaño de imagen
-RUN apk cache clean
-
-# Le decimos a Docker que tu app usa el puerto 7860 (requerido para HF Spaces)
+# === Puerto Requerido por Hugging Face Spaces ===
 EXPOSE 7860
 
-# El entrypoint que arranca Ollama, espera MySQL e inicia la app
+# === Health Check ===
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:7860/api/health || exit 1
+
+# === Script de Arranque ===
 ENTRYPOINT ["./entrypoint.sh"]

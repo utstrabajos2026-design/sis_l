@@ -1,0 +1,63 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Node
+node_modules
+npm-debug.log
+yarn-error.log
+.npm
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Sistema
+Thumbs.db
+.env
+.env.local
+.env.*.local
+
+# Testing
+coverage
+.nyc_output
+*.lcov
+
+# Build
+dist
+build
+out
+
+# Logs
+logs
+*.log
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose.yml
+docker-compose.*.yml
+
+# Documentación
+README.md
+DEPLOYMENT.md
+docs/
+tutorial_*.txt
+recomendaciones*.txt
+
+# Desarrollo
+dev
+test
+.editorconfig
+.eslintrc
+.prettierrc
+
+# Archivos temporales
+tmp
+temp
+*.tmp

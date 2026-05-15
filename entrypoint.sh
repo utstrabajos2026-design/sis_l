@@ -1,34 +1,29 @@
 #!/bin/bash
 # entrypoint.sh - Script de arranque para SIS-L en Hugging Face Spaces
-# Este script:
-# 1. Espera a que MySQL esté disponible
-# 2. Inicia el servidor Ollama
-# 3. Descarga el modelo (neural-chat es más ligero que llama2)
-# 4. Inicia la aplicación Node.js
+# Este script simplificado:
+# 1. (Opcional) Espera a MySQL si está configurado
+# 2. Inicia la aplicación Node.js en puerto 7860
 
 set -e
 
-echo "=== SIS-L Startup ==="
+echo "=== SIS-L Startup en Hugging Face Spaces ==="
 
-# 1. Esperar a MySQL
-echo "⏳ Esperando a que MySQL esté disponible..."
-./wait-for-db.sh mysql 3306
-
-# 2. Iniciar Ollama en segundo plano (si está disponible)
-if command -v ollama &> /dev/null; then
-    echo "🚀 Iniciando Ollama..."
-    ollama serve > /tmp/ollama.log 2>&1 &
-    OLLAMA_PID=$!
-    
-    # Esperar a que Ollama esté listo
-    sleep 5
-    
-    echo "📥 Descargando modelo neural-chat..."
-    ollama pull neural-chat:latest || echo "⚠️ No se pudo descargar el modelo (probablemente sin conexión)"
+# 1. Esperar a MySQL solo si DB_HOST está configurado y no es localhost
+if [ ! -z "$DB_HOST" ] && [ "$DB_HOST" != "localhost" ] && [ "$DB_HOST" != "127.0.0.1" ]; then
+    echo "⏳ Esperando a que MySQL esté disponible en $DB_HOST:${DB_PORT:-3306}..."
+    if [ -f "./wait-for-db.sh" ]; then
+        ./wait-for-db.sh "$DB_HOST" "${DB_PORT:-3306}" || echo "⚠️ No se pudo conectar a MySQL, continuando de todas formas..."
+    else
+        echo "⚠️ wait-for-db.sh no encontrado, saltando validación de BD"
+    fi
 else
-    echo "⚠️ Ollama no está instalado, continuando sin IA..."
+    echo "ℹ️ Sin base de datos configurada, ejecutando en modo offline"
 fi
 
-# 3. Iniciar la aplicación Node.js
+# 2. Mostrar información de inicio
 echo "📱 Iniciando SIS-L en puerto 7860..."
+echo "ℹ️ NODE_ENV=${NODE_ENV:-development}"
+echo "ℹ️ API estará disponible en: http://localhost:7860/api"
+
+# 3. Iniciar la aplicación Node.js
 node server.js
