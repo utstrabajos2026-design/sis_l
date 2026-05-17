@@ -27,6 +27,13 @@ Thumbs.db
 *.sublime-project
 *.sublime-workspace
 
+# Build / cobertura / artefactos
+dist/
+build/
+coverage/
+
+docker-data/
+
 # Caché de Python
 __pycache__/
 *.py[cod]
@@ -43,3 +50,4 @@ database.db
 # Archivos temporales
 tmp/
 temp/
+

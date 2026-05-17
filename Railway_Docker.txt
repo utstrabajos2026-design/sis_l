@@ -1,0 +1,131 @@
+# Railway + Docker para SIS-L
+
+Este archivo explica cómo preparar y desplegar este proyecto en Railway usando Docker.
+
+## 1. Qué tiene este repositorio
+- Aplicación Node.js con `server.js`
+- Frontend estático en `public/`
+- Conexión a MySQL en `config/db.js`
+- Dockerfile en la raíz del proyecto
+- Entrada de arranque en `entrypoint.sh`
+- El servidor usa el puerto `process.env.PORT || 7860`
+
+## 2. Requisitos previos
+- Tener la app funcionando localmente con `npm install` y `npm start`
+- Tener Git instalado
+- Tener cuenta en GitHub
+- Tener cuenta en Railway
+
+## 3. Validación local
+1. Instalar dependencias:
+```powershell
+npm install
+```
+2. Ejecutar localmente:
+```powershell
+npm start
+```
+3. Abrir en el navegador:
+```text
+http://localhost:7860
+```
+
+## 4. Probar el contenedor localmente
+1. Construir imagen Docker:
+```powershell
+docker build -t sis-l .
+```
+2. Ejecutar contenedor con variables de MySQL:
+```powershell
+docker run -p 7860:7860 `
+  -e DB_HOST=mi-host-de-mysql `
+  -e DB_USER=root `
+  -e DB_PASSWORD=mipassword `
+  -e DB_NAME=sisl `
+  sis-l
+```
+3. Verificar que la app responde en:
+```text
+http://localhost:7860
+```
+
+> Nota: si Railway provee la variable `PORT`, el servidor la usará automáticamente.
+
+## 5. Git + GitHub
+1. Inicializar Git si aún no está:
+```powershell
+git init
+```
+2. Crear `.gitignore` si falta (no subir `.env`, `node_modules`, etc.)
+3. Agregar cambios:
+```powershell
+git add .
+```
+4. Primer commit:
+```powershell
+git commit -m "Inicial commit para deploy en Railway"
+```
+5. Agregar remoto GitHub:
+```powershell
+git remote add origin https://github.com/TU_USUARIO/sis-l.git
+```
+6. Subir a GitHub:
+```powershell
+git branch -M main
+git push -u origin main
+```
+
+## 6. Configuración en Railway
+1. Crear nuevo proyecto en Railway.
+2. Seleccionar GitHub y conectar el repositorio.
+3. Elegir deploy con Docker.
+4. Asegurarse de que Railway use el archivo `Dockerfile` en la raíz.
+
+## 7. Variables de entorno en Railway
+Agregar estas variables en el panel de Railway:
+- `DB_HOST` ? nombre del host de MySQL o servicio Railway MySQL
+- `DB_PORT` ? 3306 (opcional si no cambia)
+- `DB_USER` ? root (u otro usuario)
+- `DB_PASSWORD` ? contraseña de la base de datos
+- `DB_NAME` ? sisl
+- `NODE_ENV` ? production
+
+> No subas `.env` a GitHub. Railway debe manejar las variables en su panel.
+
+## 8. Uso de MySQL en Railway
+- Si usas un servicio de base de datos de Railway, crea el plugin MySQL.
+- Copia los valores de conexión de Railway a las variables de entorno.
+- Si usas una base externa, también funciona con los mismos valores.
+
+## 9. Comentarios importantes
+- El servidor está preparado para escuchar en `PORT` o `7860`.
+- El `Dockerfile` debe llamarse exactamente `Dockerfile`.
+- `entrypoint.sh` ya arranca `node server.js`.
+- `docker-compose.yml` es útil en local, pero Railway usa el Dockerfile directo.
+
+## 10. Troubleshooting rápido
+- Si Railway no encuentra el Dockerfile: verifica que exista `Dockerfile` en la raíz.
+- Si la app no arranca: revisa las variables `DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`.
+- Si el puerto no funciona: Railway da el puerto con `PORT`; el app lo usa.
+
+## 11. Flujo de deploy final
+1. `git add .`
+2. `git commit -m "Deploy Railway Docker"`
+3. `git push`
+4. Railway detecta el cambio y construye la imagen.
+5. Verificar en el URL que Railway entrega.
+
+## 12. ¿Qué no debes subir?
+- `.env`
+- archivos con contraseñas
+- llaves privadas o tokens
+- `node_modules`
+
+## 13. Archivos clave en este proyecto
+- `package.json` ? dependencias y scripts
+- `server.js` ? servidor Express
+- `Dockerfile` ? construcción de la imagen
+- `entrypoint.sh` ? arranque de la app
+- `config/db.js` ? conexión MySQL
+- `.dockerignore` ? archivos excluidos del build
+- `.gitignore` ? archivos excluidos de Git
