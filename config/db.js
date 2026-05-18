@@ -10,11 +10,11 @@ require('dotenv').config();
 const mysql = require('mysql2/promise');
 
 const pool = mysql.createPool({
-  host:               process.env.DB_HOST     || 'localhost',
-  port:               process.env.DB_PORT     || 3306,
+  host:               process.env.DB_HOST     || 'turntable.proxy.rlwy.net',
+  port:               process.env.DB_PORT     || 22229,
   user:               process.env.DB_USER     || 'root',
-  password:           process.env.DB_PASSWORD || '',
-  database:           process.env.DB_NAME     || 'sis_l_db',
+  password:           process.env.DB_PASSWORD || 'HmjHDFsMwttYJTsxpXoqVAKfnJwlbvyB',
+  database:           process.env.DB_NAME     || 'railway',
   waitForConnections: true,
   connectionLimit:    10,       // RNF-R3: soporte de múltiples usuarios
   queueLimit:         0,
