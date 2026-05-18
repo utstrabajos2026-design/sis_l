@@ -24,7 +24,6 @@ const transporter = nodemailer.createTransport({
     rejectUnauthorized: false
   }
 });
-
 // ===============================
 // VERIFICAR CONEXIÓN SMTP
 // ===============================
