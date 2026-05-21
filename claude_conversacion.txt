@@ -1,0 +1,359 @@
+La solución — No usar Dockerfile, usar el template oficial
+Railway ya tiene Ollama como template listo. En lugar de construir la imagen desde cero, usamos la que Railway ya tiene optimizada.
+Pasos:
+1. Elimina el servicio actual
+En Railway → tu servicio ferrocarril ollama → Settings → baja hasta abajo → "Delete Service"
+
+2. Crea un servicio nuevo desde el template oficial
+
+En tu proyecto de Railway → "+ New" → "Template"
+Busca: Ollama
+Selecciona el que dice solo "Ollama" (no el que incluye OpenWebUI)
+Clic en "Deploy"
+
+Railway despliega Ollama directamente desde su registro interno, sin necesitar construir nada.
+
+3. Agrega las variables al nuevo servicio
+Una vez creado → pestaña Variables:
+VariableValorOLLAMA_HOST0.0.0.0OLLAMA_MODELtinyllama
+
+4. Agrega el Volumen
+Pestaña Volumes → "Add Volume" → Mount path: /root/.ollama
+
+5. Genera el dominio
+Settings → Networking → "Generate Domain"
+Copia la URL que te dé y actualiza en SIS-L:
+envOLLAMA_BASE_URL="https://ollama-railway-sis-l.up.railway.app"
+
+El repositorio de GitHub que creaste ya no lo necesitas para Ollama, pero puédeslo dejar. ¿Ves la opción de Templates en Railway?Dijiste: la url es (ollama-sis-l.la url es (ollama-sis-l.up.railway.app) y las variables en crudo de sis-l (DB_HOST="${{MYSQLHOST}}"
+DB_NAME="${{MYSQLDATABASE}}"
+DB_PASSWORD="${{MYSQLPASSWORD}}"
+DB_PORT="${{MYSQLPORT}}"
+DB_USER="${{MYSQLUSER}}"
+EMAIL_FROM="noreply@example.com"
+EMAIL_PASSWORD="wdzy qeoh chlv mqjn"
+EMAIL_SERVICE="gmail"
+EMAIL_USER="sis.l.s.c.00001@gmail.com"
+JWT_EXPIRES="8h"
+JWT_SECRET="tu-llave-secreta-aqui"
+NODE_ENV="production"
+OLLAMA_HOST="ollama-railway-sis-l.up.railway.app"
+OLLAMA_MODEL="tinyllama"
+SMTP_HOST=""
+SMTP_PASS=""
+SMTP_PORT="587"
+SMTP_USER=""
+VITE_API_URL="https://tu-space-url.hf.space/api"
+NIXPACKS_BUILD_CMD="npm run seed")Mostrar más8:34 a. m.Claude respondió: Perfecto.Perfecto. Aquí están las variables corregidas y listas para copiar y pegar en Railway (servicio de SIS-L):
+
+Variables corregidas de SIS-L
+envDB_HOST="${{MYSQLHOST}}"
+DB_NAME="${{MYSQLDATABASE}}"
+DB_PASSWORD="${{MYSQLPASSWORD}}"
+DB_PORT="${{MYSQLPORT}}"
+DB_USER="${{MYSQLUSER}}"
+EMAIL_FROM="noreply@example.com"
+EMAIL_PASSWORD="wdzy qeoh chlv mqjn"
+EMAIL_SERVICE="gmail"
+EMAIL_USER="sis.l.s.c.00001@gmail.com"
+JWT_EXPIRES="8h"
+JWT_SECRET="tu-llave-secreta-aqui"
+NODE_ENV="production"
+OLLAMA_BASE_URL="https://ollama-sis-l.up.railway.app"
+OLLAMA_MODEL="tinyllama"
+SMTP_HOST=""
+SMTP_PASS=""
+SMTP_PORT="587"
+SMTP_USER=""
+VITE_API_URL="https://tu-space-url.hf.space/api"
+NIXPACKS_BUILD_CMD="npm run seed"
+
+El único cambio importante
+Antes ❌Después ✅OLLAMA_HOST="ollama-railway-sis-l.up.railway.app"OLLAMA_BASE_URL="https://ollama-sis-l.up.railway.app"
+Dos cosas cambiaron:
+
+El nombre de la variable: OLLAMA_HOST → OLLAMA_BASE_URL
+El valor: se agregó https:// al inicio, y se usó la URL correcta ollama-sis-l.up.railway.app
+
+
+Después de guardar las variables, Railway va a reiniciar SIS-L automáticamente. Cuando arranque, dime qué ves en los logs del chatbot para confirmar que conecta bien con Ollama.Dijiste: logs de sis-l (✅ Archivos de traducción creados/verificadoslogs de sis-l (✅ Archivos de traducción creados/verificados
+  🤟 SIS-L corriendo en http://localhost:8080
+  📋 API: http://localhost:8080/api/health
+  Frontend 🌐: http://localhost:8080
+npm advierte la producción de configuración Utilice --omit=dev en su lugar.
+> sis-l-lengua-senhas@1.0.0 inicio
+> servidor de nodos.js
+✅ MySQL conectado corregamente
+Servidor SMTP listo para medio ambiente correos
+Contenedor inicial
+[Chatbot] Enviando a Ollama (tinyllama): {
+  modelo: 'tinyllama',
+  isPhi: falso,
+  opciones: { temperatura: 0,7, top_p: 0,9, num_predict: 600 },
+  tiempo de espera: '300'
+}
+[Chatbot] Error: la recuperación falló
+[Chatbot] Enviando a Ollama (tinyllama): {
+  modelo: 'tinyllama',
+  isPhi: falso,
+  opciones: { temperatura: 0,7, top_p: 0,9, num_predict: 600 },
+  tiempo de espera: '300'
+}
+[Chatbot] Error: la recuperación falló)Mostrar más8:37 a. m.Claude respondió: El servidor SIS-L está bien, MySQL conecta, pero Ollama no responde.El servidor SIS-L está bien, MySQL conecta, pero Ollama no responde. El error fetch failed significa que SIS-L no puede llegar a la URL de Ollama.
+Necesito ver cómo está leyendo la variable en el código. ¿Puedes pegar el contenido del archivo donde está la lógica del chatbot? Probablemente se llama algo como chatbot.js, ollamaService.js, o similar, dentro de controllers/ o services/.
+También dime: en Railway, en el servicio de Ollama (ollama-sis-l), ¿el deploy está en verde (activo) o también falló?Dijiste: este es el chatbot./**
+ * chatbot.js  —  Lógica del asistente IA (LSC)
+ * Llama al backend Node.js que hace proxy a Ollama.
+ * Arquitectura: Frontend → /api/chatbot → Ollama local
+ */
+
+// ── Estado ────────────────────────────────────────────────────
+const chatState = {
+  history:    [],   // { role: 'user'|'apastedeste es el chatbot.js y como esta ollama en el proyecto de railway8:42 a. m.Claude respondió: Buenas noticias: Ollama está en línea en Railway.Buenas noticias: Ollama está en línea en Railway. El problema está en el backend de Node.js, no en el frontend.
+El chatbot.js que compartiste es el frontend — llama a /api/chatbot/chat que es tu propio backend Node.js. El backend es el que debe leer OLLAMA_BASE_URL y hacer el fetch a Ollama. Necesito ver ese archivo.
+Busca en tu proyecto SIS-L un archivo que tenga algo como chatbot en el nombre dentro de estas carpetas:
+controllers/
+routes/
+services/
+src/
+Puede llamarse:
+
+chatbotController.js
+chatbotRoutes.js
+ollamaService.js
+o similar
+
+¿Puedes pegar el contenido de ese archivo? Ese es donde está el fetch failed que aparece en los logs.Dijiste: tengo esto// ════════════════════════════════════════════════
+//  CHATBOT  —  Añadir estas rutas a view/routes.js
+//  (pegar antes del último module.exports)
+// ════════════════════════════════════════════════
+
+const OLLAMA_URL   = process.env.OLLAMA_URL   || 'http://localhost:11434';
+const OLLAMA_MODELpasted/**
+ * view/routes.js  ─  CAPA VIEW
+ * ─────────────────────────────────────────────────────────────
+ * Solo recibe peticiones HTTP, llama al Watcher y devuelve JSON.
+ * NO tiene lógica de negocio. NO toca el Model directamente.
+ *
+ * Flujo MVW:
+ *   Navegador  →  View (rutas)  →  Watcher  → pastedtengo esto8:44 a. m.Claude respondió: Encontré el problema.Encontré el problema. En view/routes.js la variable se llama OLLAMA_URL, pero en las variables de Railway de SIS-L tienes OLLAMA_BASE_URL. No coinciden.
+javascript// Línea en routes.js
+const OLLAMA_URL = process.env.OLLAMA_URL || 'http://localhost:11434';
+//                             ^^^^^^^^^^
+//                             Busca OLLAMA_URL
+
+// Pero en Railway tienes
+OLLAMA_BASE_URL="https://ollama-sis-l.up.railway.app"
+//  ^^^^^^^^^^^^ Nombre diferente → nunca lo encuentra
+//               → cae al default: http://localhost:11434
+//               → fetch failed (localhost no existe en la nube)
+
+Solución — dos opciones
+Opción A: Cambiar la variable en Railway (más fácil)
+En Railway → servicio sis_l → Variables, cambia:
+env# Elimina esto:
+OLLAMA_BASE_URL="https://ollama-sis-l.up.railway.app"
+
+# Agrega esto:
+OLLAMA_URL="https://ollama-sis-l.up.railway.app"
+Y también asegúrate de que OLLAMA_MODEL tenga el valor correcto:
+envOLLAMA_MODEL="tinyllama"
+
+Opción B: Cambiar el código en routes.js (más limpio)
+En view/routes.js, línea donde define OLLAMA_URL, cámbiala a:
+javascriptconst OLLAMA_URL = process.env.OLLAMA_BASE_URL || process.env.OLLAMA_URL || 'http://localhost:11434';
+Así acepta cualquiera de los dos nombres.
+
+La Opción A es más rápida porque no requiere tocar código ni hacer redeploy de SIS-L por un cambio de código. Solo cambias la variable y Railway reinicia automáticamente.
+¿Cuál prefieres?Dijiste: utilice la opcion A , pero sigue teniendo problemas.utilice la opcion A , pero sigue teniendo problemas. esto es lo q me sale en consola cuando ejecuto el chatbot (chatbot.js:48 [Chatbot] Status error: Error: Ningún modelo encontrado. Ejecuta: ollama pull tinyllama 
+    at checkOllamaStatus (chatbot.js:41:13) 
+checkOllamaStatus    @    chatbot.js:48 
+/api/chatbot/chat:1  
+ Failed to load resource: the server responded with a status of 502 () 
+chatbot.js:177 [Chatbot] Error: Error: Ollama error: {"error":"model 'tinyllama' not found"} 
+    at sendMessage (chatbot.js:100:13) 
+sendMessage    @    chatbot.js:177 
+﻿ ) y estos son los registros o logs de sis-l (npm advierte la producción de configuración Utilice --omit=dev en su lugar. 
+[Chatbot] Enviando a Ollama (tinyllama): { 
+  modelo: 'tinyllama', 
+  isPhi: falso, 
+  opciones: { temperatura: 0,7, top_p: 0,9, num_predict: 600 }, 
+  tiempo de espera: '300' 
+} 
+[Chatbot] Error de Ollama: {"error":"modelo 'tinyllama' no encontrado"}) y de ollama ([GIN] 21/05/2026 - 14:50:22 | 200 | 4.047792ms | 54.215.97.76 | OBTENER "/api/etiquetas" 
+[GIN] 21/05/2026 - 14:55:07 | 200 | 112,511 µs | 52.52.143.116 | OBTENER "/api/etiquetas" 
+[GIN] 21/05/2026 - 14:55:09 | 404 | 422,483 µs | 52.52.143.116 | PUBLICAR "/api/chat")Mostrar menos8:59 a. m.Claude respondió: El problema es clarísimo ahora.El problema es clarísimo ahora. Ollama está corriendo pero el modelo tinyllama nunca se descargó. El start.sh no funcionó correctamente.
+Lo prueba el log de Ollama:
+GET /api/tags    → 200 ✅  (Ollama responde)
+POST /api/chat   → 404 ❌  (modelo no existe)
+
+Solución — Descargar el modelo manualmente desde Railway
+Railway tiene una terminal integrada para ejecutar comandos dentro del contenedor.
+Pasos:
+
+Ve a Railway → servicio Ollama (ollama-sis-l)
+Pestaña "Deploy" → busca el botón "Railway Shell" o "Connect" → "Open Shell"
+En la terminal que se abre, escribe:
+
+bashollama pull tinyllama
+
+Espera que descargue (puede tomar 1-2 minutos, es ~600 MB)
+Verifica que quedó:
+
+bashollama list
+Debes ver tinyllama en la lista.
+
+Si no encuentras la Shell en Railway
+Ve a tu servicio Ollama → pestaña "Settings" → busca "Shell" o "Console". También puede aparecer como un ícono de terminal >_ en la esquina del servicio.
+
+Una vez descargado el modelo, prueba el chatbot de nuevo. El modelo queda guardado en el volumen /root/.ollama que ya tienes configurado, así que no se borrará aunque Railway reinicie el servicio.
+¿Ves la opción de Shell/Console en tu servicio de Ollama?Dijiste: sigue fallando.sigue fallando. esto es lo q me sale en consola cuando ejecuto el chatbot (Failed to load resource: the server responded with a status of 503 ()
+chatbot.js:48 [Chatbot] Status error: Error: Ollama no disponible: Ollama no responde
+    at checkOllamaStatus (chatbot.js:41:13)
+checkOllamaStatus    @    chatbot.js:48
+/api/chatbot/chat:1 
+ Failed to load resource: the server responded with a status of 502 ()
+chatbot.js:177 [Chatbot] Error: Error: Ollama error: {"status":"error","code":502,"message":"Application failed to respond","request_id":"S4Bp-A0bRpKKVf0HnpoFkQ"}
+    at sendMessage (chatbot.js:100:13)
+sendMessage    @    chatbot.js:177
+﻿
+) y estos son los registros o logs de sis-l (Contenedor inicial
+  Frontend 🌐: http://localhost:8080
+> sis-l-lengua-senhas@1.0.0 inicio
+✅ MySQL conectado corregamente
+> servidor de nodos.js
+Servidor SMTP listo para medio ambiente correos
+✅ Archivos de traducción creados/verificados
+  🤟 SIS-L corriendo en http://localhost:8080
+  📋 API: http://localhost:8080/api/health
+npm advierte la producción de configuración Utilice --omit=dev en su lugar.
+[Chatbot] Enviando a Ollama (tinyllama): {
+  modelo: 'tinyllama',
+  isPhi: falso,
+  opciones: { temperatura: 0,7, top_p: 0,9, num_predict: 600 },
+  tiempo de espera: '300'
+}
+[Chatbot] Error de Ollama: {"error":"modelo 'tinyllama' no encontrado"}
+  tiempo de espera: '300'
+}
+[Chatbot] Error de Ollama: {"status":"error","code":502,"message":"La aplicación no respondió","request_id":"S4Bp-A0bRpKKVf0HnpoFkQ"}
+  opciones: { temperatura: 0,7, top_p: 0,9, num_predict: 600 },
+[Chatbot] Enviando a Ollama (tinyllama): {
+  modelo: 'tinyllama',
+  isPhi: falso,) y de ollama (Volumen de montaje en: /var/lib/containers/railwayapp/bind-mounts/9008ab5a-b16b-40b6-89db-50ed3d10115c/vol_s4nnec2qdypubjmp
+Error: no se pudo conectar al servidor ollama, ejecute 'ollama serve' para iniciarlo
+Contenedor inicial
+Volumen de montaje en: /var/lib/containers/railwayapp/bind-mounts/9008ab5a-b16b-40b6-89db-50ed3d10115c/vol_s4nnec2qdypubjmp
+Error: no se pudo conectar al servidor ollama, ejecute 'ollama serve' para iniciarlo
+Volumen de montaje en: /var/lib/containers/railwayapp/bind-mounts/9008ab5a-b16b-40b6-89db-50ed3d10115c/vol_s4nnec2qdypubjmp)Mostrar menos9:06 a. m.Claude respondió: Ahora el log de Ollama dice todo:Ahora el log de Ollama dice todo:
+Error: no se pudo conectar al servidor ollama, ejecute 'ollama serve' para iniciarlo
+El template de Railway para Ollama no está arrancando el servidor automáticamente. El contenedor inicia pero Ollama no queda corriendo.
+
+La causa raíz
+El template oficial de Railway para Ollama espera que le pases el modelo como variable de entorno OLLAMA_MODEL y él lo descarga al arrancar. Pero hay un problema: el template usa una variable diferente.
+
+Solución definitiva — variables correctas en el servicio Ollama
+Ve a Railway → servicio Ollama → pestaña Variables y asegúrate de tener exactamente estas:
+VariableValorOLLAMA_HOST0.0.0.0OLLAMA_MODELStinyllama
+El detalle es OLLAMA_MODELS (en plural), no OLLAMA_MODEL. Algunos templates de Railway usan el plural para saber qué modelos descargar al iniciar.
+
+Si eso no funciona — usar el template correcto
+El template que tienes puede estar dañado. Elimina el servicio Ollama y crea uno nuevo así:
+
+Railway → tu proyecto → "+ New" → "Template"
+Busca: Ollama
+Elige el que dice "Deploy Ollama" con descripción "Self-host your own LLM"
+Antes de hacer deploy, en la pantalla de configuración del template agrega:
+
+VariableValorOLLAMA_HOST0.0.0.0OLLAMA_MODELStinyllama
+
+Deploy
+
+
+Verificar que arrancó bien
+En los logs de Ollama debes ver algo como:
+Ollama is running
+Y no el error ollama serve.
+¿Puedes intentar primero solo cambiar OLLAMA_MODEL → OLLAMA_MODELS en las variables del servicio Ollama actual?Dijiste: CREO DEBERIA IR ASICREO DEBERIA IR ASI9:10 a. m.Claude respondió: ¡Exacto!¡Exacto! Eso es perfecto. Esa configuración es la correcta y tiene toda la lógica:
+
+Comando previo al despliegue (ollama pull tinyllama) → descarga el modelo antes de arrancar
+Comando de inicio personalizado (ollama serve) → arranca el servidor Ollama
+
+Guarda esa configuración y espera que Railway haga el redeploy. En los logs deberías ver:
+Pulling tinyllama...
+...
+Ollama is running
+Una vez que los logs muestren que está corriendo, prueba el chatbot. Si ves algún error nuevo en los logs, compártelo aquí.Dijiste: Me dio un error, pero me dio un diagnóstico (Elimine el comando de implementación previa y actualice el comando de inicio para iniciar el servidor Ollama, espe…Me dio un error, pero me dio un diagnóstico (Elimine el comando de implementación previa y actualice el comando de inicio para iniciar el servidor Ollama, espere a que esté listo y luego extraiga el modelo. El comando de implementación previa "ollama pull tinyllama" falla porque requiere un servidor Ollama en ejecución, pero los comandos de implementación previa se ejecutan en un contenedor separado antes de que se inicie la aplicación. Los volúmenes tampoco se montan durante la implementación previa, por lo que cualquier modelo descargado no persistiría en /root/.ollama de todos modos. ) que me dio corregir el error para luego darme este comando de inicio personalizado (ollama serve & sleep 5 && ollama pull tinyllama && wait)9:17 a. m.Claude respondió: ¡Perfecto!¡Perfecto! El diagnóstico de Railway tiene razón. Pon ese comando exactamente así:
+Comando previo al despliegue: (déjalo vacío)
+Comando de inicio personalizado:
+bashollama serve & sleep 5 && ollama pull tinyllama && wait
+Guarda y espera el redeploy. En los logs de Ollama deberías ver:
+Ollama is running
+pulling manifest...
+...done
+Cuando esté listo, prueba el chatbot y dime qué pasa.Dijiste: sigue diciendome (⚠️ Error de conexión.sigue diciendome (⚠️ Error de conexión. Verifica que Ollama esté activo:
+ollama serve) y la consola (chatbot.js:48 [Chatbot] Status error: Error: Ningún modelo encontrado. Ejecuta: ollama pull tinyllama
+    at checkOllamaStatus (chatbot.js:41:13)
+checkOllamaStatus    @    chatbot.js:48
+/api/chatbot/chat:1 
+ Failed to load resource: the server responded with a status of 502 ()
+chatbot.js:177 [Chatbot] Error: Error: Ollama error: {"error":"model 'tinyllama' not found"}
+    at sendMessage (chatbot.js:100:13)
+sendMessage    @    chatbot.js:177
+﻿
+)9:20 a. m.2 / 2Claude respondió: El error cambió — ahora Ollama sí responde (ya no dice "no disponible"), pero dice que tinyllama no está descargado todavía.El error cambió — ahora Ollama sí responde (ya no dice "no disponible"), pero dice que tinyllama no está descargado todavía.
+Verifiquemos qué modelos tiene Ollama realmente. Abre esta URL en el navegador:
+https://ollama-sis-l.up.railway.app/api/tags
+Y dime qué ves. Debería mostrar algo como:
+json{"models":[{"name":"tinyllama:latest",...}]}
+O si está vacío:
+json{"models":[]}
+Eso nos dice si el pull funcionó o no, y decidimos el siguiente paso.{"models":[]}9:20 a. m.Claude respondió: El modelo nunca se descargó.El modelo nunca se descargó. El sleep 5 no es suficiente — Ollama tarda más de 5 segundos en iniciar en Railway antes de poder aceptar el pull.
+
+Solución — aumentar el tiempo de espera
+En Railway → servicio Ollama → Settings → Comando de inicio personalizado, cambia a:
+bashollama serve & sleep 15 && ollama pull tinyllama && wait
+El cambio es sleep 5 → sleep 15. Le damos más tiempo a Ollama para arrancar antes de intentar descargar el modelo.
+Guarda, espera el redeploy, y cuando termine vuelve a abrir:
+https://ollama-sis-l.up.railway.app/api/tags
+¿Ves tinyllama esta vez?{"models":[]}9:22 a. m.Claude respondió: Sigues sin modelos.Sigues sin modelos. El problema es que sleep 15 tampoco es suficiente o el pull falla silenciosamente. Necesitamos un script más robusto que espere activamente hasta que Ollama esté listo.
+
+Solución — espera activa en lugar de sleep fijo
+En Railway → servicio Ollama → Settings → Comando de inicio personalizado, reemplaza por:
+bashollama serve & until ollama list > /dev/null 2>&1; do sleep 2; done && ollama pull tinyllama && wait
+Lo que hace:
+
+Arranca ollama serve en segundo plano
+Espera en un bucle hasta que Ollama responda (ollama list)
+Solo entonces ejecuta ollama pull tinyllama
+wait mantiene el proceso vivo
+
+Guarda, espera el redeploy, y revisa los logs del servicio Ollama — deberías ver líneas del pull como pulling manifest, pulling layers, etc. Comparte lo que aparece en los logs esta vez.Dijiste: time=2026-05-21T15:24:17.time=2026-05-21T15:24:17.531Z level=INFO source=routes.go:1802 msg="server config" env="map[CUDA_VISIBLE_DEVICES: GGML_VK_VISIBLE_DEVICES: GPU_DEVICE_ORDINAL: HIP_VISIBLE_DEVICES: HSA_OVERRIDE_GFX_VERSION: HTTPS_PROXY: HTTP_PROXY: NO_PROXY: OLLAMA_CONTEXT_LENGTH:0 OLLAMA_DEBUG:INFO OLLAMA_DEBUG_LOG_REQUESTS:false OLLAMA_EDITOR: OLLAMA_FLASH_ATTENTION:false OLLAMA_GPU_OVERHEAD:0 OLLAMA_HOST:http://0.0.0.0:11434 OLLAMA_KEEP_ALIVE:5m0s OLLAMA_KV_CACHE_TYPE: OLLAMA_LLMfalse OLLAMA_NUM_PARALLEL:1 OLLAMA_ORIGINS:[http://localhost https://localhost http://localhost:* https://localhost:* http://127.0.0.1 https://127.0.0.1 http://127.0.0.1:* https://127.0.0.1:* http://0.0.0.0 https://0.0.0.0 http://0.0.0.0:* aplicación://* archivo://* tauri://* vscode-webview://* vscode-file://*] OLLAMA_REMOTES:[ollama.com] OLLAMA_SCHED_SPREAD:false OLLAMA_VULKAN:false ROCR_VISIBLE_DEVICES: http_proxy: https_proxy: no_proxy:]"
+time=2026-05-21T15:24:17.531Z level=INFO source=routes.go:1804 msg="Ollama cloud deshabilitado: falso"
+time=2026-05-21T15:24:17.531Z nivel=INFO fuente=images.go:517 msg="total blobs: 0"
+time=2026-05-21T15:24:17.531Z nivel=INFO fuente=images.go:524 msg="total de blobs no utilizados eliminados: 0"
+time=2026-05-21T15:24:17.532Z level=INFO source=routes.go:1864 msg="Escuchando [::]:11434 (versión 0.24.0)"
+time=2026-05-21T15:24:17.534Z level=INFO source=runner.go:67 msg="descubriendo GPU disponibles..."
+time=2026-05-21T15:24:17.534Z level=INFO source=server.go:433 msg="starting runner" cmd="/usr/bin/ollama runner --ollama-engine --port 34695"
+time=2026-05-21T15:24:17.571Z level=INFO source=server.go:433 msg="starting runner" cmd="/usr/bin/ollama runner --ollama-engine --port 35587"
+time=2026-05-21T15:24:17.597Z level=INFO source=runner.go:106 msg="soporte experimental de Vulkan deshabilitado.  Para habilitarlo, configure OLLAMA_VULKAN=1"
+time=2026-05-21T15:24:17.597Z level=INFO source=types.go:60 msg="inference compute" id=cpu biblioteca=cpu compute="" nombre=cpu descripción=cpu libdirs=ollama driver="" pci_id="" tipo="" total="953,7 MiB" disponible="921,7 MiB"
+time=2026-05-21T15:24:17.597Z nivel=INFO fuente=routes.go:1914 msg="contexto predeterminado basado en vram" total_vram="0 B" default_num_ctx=4096
+time=2026-05-21T15:24:17.649Z nivel=INFO fuente=model_recommendations.go:177 msg="model recomendaciones caché de suspensión programada" espera=4h9m12.258129671s consecutivos_failures=0
+Contenedor inicial
+Volumen de montaje en: /var/lib/containers/railwayapp/bind-mounts/52103757-1ef0-49c1-b5b5-893cfa6f3c1f/vol_s4nnec2qdypubjmp
+[GIN] 21/05/2026 - 15:25:01 | 200 | 5.487802ms | 181.55.23.11 | OBTENER "/api/etiquetas"
+[GIN] 21/05/2026 - 15:25:08 | 200 | 82,152 µs | 52.52.143.116 | OBTENER "/api/etiquetas"Mostrar menos9:25 a. m.Claude respondió: Ollama arranca bien pero el pull no aparece en los logs — significa que el comando ollama pull tinyllama nunca se ejecutó o falló silenciosamente.Ollama arranca bien pero el pull no aparece en los logs — significa que el comando ollama pull tinyllama nunca se ejecutó o falló silenciosamente.
+Fíjate en esta línea crítica:
+total="953,7 MiB" disponible="921,7 MiB"
+Solo tiene ~953 MB de RAM total. TinyLlama necesita ~600 MB solo para el modelo, más lo que usa el sistema. Está muy justo, pero intentémoslo con un modelo aún más pequeño.
+
+Solución — cambiar a smollm2:135m (el más liviano de todos)
+En Railway → servicio Ollama → Settings → Comando de inicio personalizado:
+bashollama serve & until ollama list > /dev/null 2>&1; do sleep 2; done && ollama pull smollm2:135m && wait
+Y en Variables cambia:
+VariableValorOLLAMA_MODELsmollm2:135m
+Y en el servicio SIS-L → Variables:
+VariableValorOLLAMA_URLhttps://ollama-sis-l.up.railway.appOLLAMA_MODELsmollm2:135m
+smollm2:135m pesa solo ~90 MB y debería descargar y correr sin problemas con esa RAM.
+Guarda, redeploy, y comparte los logs de Ollama — esta vez deberías ver líneas de pulling.
