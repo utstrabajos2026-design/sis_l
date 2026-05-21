@@ -164,7 +164,7 @@ router.get('/progreso', auth, async (req, res) => {
 //  CHATBOT  —  IA asistente especializado en LSC
 // ════════════════════════════════════════════════
 
-const OLLAMA_URL = process.env.OLLAMA_BASE_URL || process.env.OLLAMA_URL || 'http://localhost:11434';
+const OLLAMA_URL   = process.env.OLLAMA_URL   || 'http://localhost:11434';
 const OLLAMA_MODEL = process.env.OLLAMA_MODEL || 'llama3.2:latest';
 const OLLAMA_TIMEOUT = parseInt(process.env.OLLAMA_TIMEOUT) || 300000; // 5 minutos
 
